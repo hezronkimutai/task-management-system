@@ -2,6 +2,28 @@
 
 A full-stack task management application built with Spring Boot (backend) and React with TypeScript (frontend).
 
+## Technology Stack & Versions
+
+### Backend
+- **Java**: 24.0.2 (Oracle JDK 24)
+- **Spring Boot**: 3.4.1
+- **Maven**: 3.9.11 (wrapper)
+- **JWT**: 0.12.6 (JJWT)
+- **Database**: H2 (in-memory)
+- **Build Tool**: Maven
+
+### Frontend
+- **Node.js**: 24.6.0
+- **npm**: 11.5.1
+- **React**: 19.1.1
+- **TypeScript**: 4.9.5
+- **React Scripts**: 5.0.1
+- **Testing Library**: @testing-library/react 16.3.0
+- **Web Vitals**: 5.1.0
+- **Additional Dependencies**:
+  - axios: 1.7.9 (HTTP client)
+  - react-router-dom: 7.1.7 (routing)
+
 ## Project Structure
 
 ```
@@ -15,12 +37,43 @@ task-management-system/
 
 Before running this application, make sure you have the following installed:
 
-- **Java 17** or higher
-- **Node.js** (version 16 or higher)
-- **npm** or **yarn**
-- **Maven** (for backend)
+- **Java 24** or higher (Oracle JDK or OpenJDK)
+- **Node.js** 24.6.0 or higher (recommended to use NVM)
+- **npm** 11.5.1 or higher
+- **Maven** (included via wrapper)
 
 ## Quick Start
+
+### Version Verification
+
+Before getting started, verify you have the correct versions installed:
+
+```bash
+# Check Java version (should be 24 or higher)
+java -version
+
+# Check Node.js version (should be 24.6.0 or higher)
+node --version
+
+# Check npm version (should be 11.5.1 or higher)
+npm --version
+```
+
+### Installing Required Versions
+
+**Java 24:**
+- Download from [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) or use [OpenJDK](https://openjdk.org/)
+
+**Node.js 24.6.0 (using NVM - recommended):**
+```bash
+# Install NVM if not already installed
+# Windows: Download from https://github.com/coreybutler/nvm-windows
+# Linux/Mac: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+
+# Install and use Node.js 24.6.0
+nvm install 24.6.0
+nvm use 24.6.0
+```
 
 ### Option 1: Using Quick Setup Scripts
 
@@ -61,11 +114,13 @@ For Linux/Mac:
 The backend server will start on **http://localhost:8080**
 
 ### Backend Features:
+- Spring Boot 3.4.1 with Java 24
 - REST API endpoints
 - H2 in-memory database
-- JWT authentication
+- JWT authentication (JJWT 0.12.6)
 - CORS configuration for frontend integration
 - Database console available at: http://localhost:8080/h2-console
+- Latest security features with Spring Security 6.4.2
 
 ### Database Configuration:
 - **URL:** `jdbc:h2:mem:testdb`
@@ -92,10 +147,14 @@ The backend server will start on **http://localhost:8080**
 The frontend application will start on **http://localhost:3000**
 
 ### Frontend Features:
-- React 19 with TypeScript
+- React 19.1.1 with TypeScript 4.9.5
+- Modern React with latest features
 - Responsive design
 - Hot reload during development
 - Configured to work with backend API
+- Web Vitals 5.1.0 for performance monitoring
+- Router support with react-router-dom 7.1.7
+- HTTP client with axios 1.7.9
 
 ## Development Workflow
 
@@ -177,9 +236,48 @@ The frontend is configured to connect to the backend at `http://localhost:8080`.
    - H2 database runs in-memory, data is lost on restart
    - Access H2 console to verify database state
 
-4. **Maven/Node issues:**
-   - Ensure Java 17+ and Node.js 16+ are installed
-   - Clear caches: `./mvnw clean` (backend) or `npm install --force` (frontend)
+4. **Version compatibility issues:**
+   - **Java**: Ensure Java 24 is installed and JAVA_HOME is set correctly
+   - **Node.js**: Use Node.js 24.6.0 (recommended via NVM)
+   - **TypeScript**: Project uses TypeScript 4.9.5 (compatible with React Scripts 5.0.1)
+
+5. **Maven/Node issues:**
+   - Backend: `./mvnw clean install` (Java 24 required)
+   - Frontend: `rm -rf node_modules && npm install` (clean install)
+
+6. **Web Vitals API errors:**
+   - Updated to Web Vitals 5.1.0 with new API (onCLS, onINP, onFCP, onLCP, onTTFB)
+   - FID metric replaced with INP (Interaction to Next Paint)
+
+### Development Environment Setup:
+- Use latest IDEs with Java 24 and Node.js 24 support
+- VS Code extensions: Java Extension Pack, ES7+ React/Redux/React-Native snippets
+- IntelliJ IDEA: Enable Java 24 preview features if needed
+
+## Recent Updates (August 2025)
+
+### Backend Updates:
+- ✅ **Java**: Upgraded to Java 24.0.2 (latest stable)
+- ✅ **Spring Boot**: Updated to 3.4.1 (latest stable)
+- ✅ **JWT**: Updated to JJWT 0.12.6 (latest)
+- ✅ **Maven**: Using latest wrapper 3.9.11
+- ✅ **Dependencies**: All dependencies updated to latest compatible versions
+
+### Frontend Updates:
+- ✅ **Node.js**: Upgraded to v24.6.0 (latest stable)
+- ✅ **npm**: Updated to v11.5.1 (latest)
+- ✅ **React**: Already on v19.1.1 (latest)
+- ✅ **TypeScript**: Using v4.9.5 (latest compatible with React Scripts)
+- ✅ **Web Vitals**: Updated to v5.1.0 with new API
+- ✅ **Testing Libraries**: All updated to latest versions
+- ✅ **Dependencies**: Clean installation without legacy peer deps
+
+### Key Improvements:
+- Modern development stack with latest stable versions
+- Enhanced performance monitoring with Web Vitals 5.1.0
+- Improved security with latest JWT implementation
+- Better type safety with modern TypeScript
+- Clean dependency resolution without legacy workarounds
 
 ## Contributing
 
@@ -188,6 +286,11 @@ The frontend is configured to connect to the backend at `http://localhost:8080`.
 3. Make your changes
 4. Test both backend and frontend
 5. Submit a pull request
+
+**Development Requirements:**
+- Java 24+ for backend development
+- Node.js 24.6.0+ for frontend development
+- Follow the version requirements specified above
 
 ## License
 
