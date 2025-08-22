@@ -1,715 +1,348 @@
-# 📋 GitHub Issues Breakdown - 2-Day Implementation
+# 📋 GitHub Issues Breakdown - 2-Hour Coding Assignment
 
-This document provides a detailed breakdown of GitHub issues for implementing the Task Management System in 2 days.
+This document provides a detailed breakdown of GitHub issues for implementing the Task Management System within the 2-hour time constraint of the coding assignment. Issues are prioritized to deliver a working full-stack application with authentication and task CRUD operations.
 
 ## 🏷️ Issue Labels
 
 Before creating issues, set up these labels in your GitHub repository:
 
-- `day-1` - Tasks for Day 1
-- `day-2` - Tasks for Day 2
+- `phase-1-setup` - Project setup and basic structure (0-30 min)
+- `phase-2-backend` - Backend API implementation (30-75 min)
+- `phase-3-frontend` - Frontend development (75-105 min)
+- `phase-4-integration` - Integration and testing (105-120 min)
 - `backend` - Backend related tasks
 - `frontend` - Frontend related tasks
-- `setup` - Project setup tasks
 - `authentication` - Authentication related
 - `task-management` - Task CRUD operations
-- `ui/ux` - User interface tasks
-- `testing` - Testing related
-- `documentation` - Documentation tasks
-- `priority-high` - High priority tasks
-- `priority-medium` - Medium priority tasks
-- `priority-low` - Low priority tasks
+- `critical` - Must complete for working app
+- `important` - Should complete if time permits
+- `nice-to-have` - Optional enhancements
 
 ---
 
-## 🌅 DAY 1 ISSUES
+## ⏱️ PHASE 1: PROJECT SETUP (0-30 minutes)
 
-### Issue #1: Project Setup and Folder Structure
-**Labels:** `day-1`, `setup`, `priority-high`
-**Assignee:** Developer
-**Milestone:** Day 1 Morning
+### Issue #1: Quick Project Initialization and Structure
+**Labels:** `phase-1-setup`, `critical`
+**Time Estimate:** 15 minutes
 
 **Description:**
-Set up the complete project structure for both backend and frontend applications.
+Rapidly set up the complete project structure for both backend and frontend applications using Spring Initializr and Create React App.
 
 **Acceptance Criteria:**
-- [ ] Create root project directory structure
-- [ ] Initialize Spring Boot backend with Maven
-- [ ] Initialize React TypeScript frontend
-- [ ] Set up Git repository with proper .gitignore files
-- [ ] Create basic documentation structure
-- [ ] Configure development environment
+- [ ] Create root project directory with backend/ and frontend/ folders
+- [ ] Initialize Spring Boot backend with required dependencies via Spring Initializr
+- [ ] Initialize React frontend with TypeScript
+- [ ] Configure basic .gitignore files
+- [ ] Test both applications start successfully
 
-**Tasks:**
-1. Create folder structure as per IMPLEMENTATION_GUIDE.md
-2. Initialize Spring Boot project with Spring Initializr
-3. Create React TypeScript app with CRA
-4. Set up Git repository and initial commit
-5. Create basic README.md
-6. Configure IDE settings (optional)
-
-**Time Estimate:** 2 hours
+**Quick Setup Commands:**
+```bash
+# Backend (Spring Initializr)
+# Dependencies: Web, JPA, Security, H2, Validation
+# Frontend
+npx create-react-app frontend --template typescript
+```
 
 ---
 
-### Issue #2: Backend Dependencies and Configuration
-**Labels:** `day-1`, `backend`, `setup`, `priority-high`
-**Assignee:** Developer
-**Milestone:** Day 1 Morning
+### Issue #2: Essential Dependencies and Database Setup
+**Labels:** `phase-1-setup`, `backend`, `critical`
+**Time Estimate:** 15 minutes
 
 **Description:**
-Configure all necessary dependencies and application properties for the Spring Boot backend.
+Configure essential dependencies and H2 database for rapid development.
 
 **Acceptance Criteria:**
-- [ ] Configure pom.xml with all required dependencies
-- [ ] Set up application.properties with database and JWT configuration
-- [ ] Create main Application class
-- [ ] Configure H2 database
-- [ ] Set up basic CORS configuration
-- [ ] Test application startup
+- [ ] Add JWT dependencies to pom.xml
+- [ ] Configure application.properties for H2 database
+- [ ] Enable H2 console for development
+- [ ] Configure basic CORS settings
+- [ ] Test database connectivity
 
-**Dependencies to Add:**
+**Key Dependencies:**
 ```xml
-- spring-boot-starter-web
-- spring-boot-starter-data-jpa
-- spring-boot-starter-security
-- spring-boot-starter-validation
-- h2database
-- jjwt-api, jjwt-impl, jjwt-jackson
-- spring-boot-starter-test
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-api</artifactId>
+    <version>0.11.5</version>
+</dependency>
 ```
-
-**Time Estimate:** 1 hour
 
 ---
 
-### Issue #3: User Entity and Repository Setup
-**Labels:** `day-1`, `backend`, `authentication`, `priority-high`
-**Assignee:** Developer
-**Milestone:** Day 1 Morning
+## ⚡ PHASE 2: BACKEND API (30-75 minutes)
+
+### Issue #3: User Entity and Security Configuration
+**Labels:** `phase-2-backend`, `authentication`, `critical`
+**Time Estimate:** 20 minutes
 
 **Description:**
-Create User entity with JPA annotations and repository layer.
+Create User entity and basic JWT security configuration in one go for speed.
 
 **Acceptance Criteria:**
-- [ ] Create User entity with all required fields
-- [ ] Add JPA annotations for database mapping
-- [ ] Create UserRepository interface
-- [ ] Add custom query methods if needed
-- [ ] Create Role enum
-- [ ] Add validation annotations
-- [ ] Test repository with H2 console
+- [ ] Create User entity with required fields (id, username, email, password, role, createdAt)
+- [ ] Create Role enum (USER, ADMIN)
+- [ ] Set up UserRepository
+- [ ] Configure basic Spring Security with JWT
+- [ ] Create JwtUtils class for token generation
+- [ ] Test user creation and JWT generation
 
-**User Entity Fields:**
-```java
-- id (Long, @Id @GeneratedValue)
-- username (String, unique, not null)
-- email (String, unique, not null)
-- password (String, not null)
-- role (Role enum - USER, ADMIN)
-- createdAt (LocalDateTime)
-- updatedAt (LocalDateTime)
-```
-
-**Time Estimate:** 1.5 hours
+**Speed Implementation Note:**
+Combine entity creation with basic security setup to save time.
 
 ---
 
-### Issue #4: JWT Security Configuration
-**Labels:** `day-1`, `backend`, `authentication`, `priority-high`
-**Assignee:** Developer
-**Milestone:** Day 1 Afternoon
+### Issue #4: Authentication REST API
+**Labels:** `phase-2-backend`, `authentication`, `critical`
+**Time Estimate:** 15 minutes
 
 **Description:**
-Implement JWT-based authentication and authorization with Spring Security.
+Implement essential authentication endpoints with minimal validation.
 
 **Acceptance Criteria:**
-- [ ] Create JWT utility class for token generation/validation
-- [ ] Implement JWT authentication filter
-- [ ] Configure Spring Security with JWT
-- [ ] Create authentication entry point
-- [ ] Set up password encoding with BCrypt
-- [ ] Configure CORS for frontend integration
-- [ ] Test JWT token generation and validation
-
-**Components to Create:**
-```java
-- JwtUtils.java
-- JwtAuthenticationEntryPoint.java
-- JwtAuthenticationFilter.java
-- SecurityConfig.java
-- UserDetailsImpl.java
-- UserDetailsServiceImpl.java
-```
-
-**Time Estimate:** 2 hours
-
----
-
-### Issue #5: Authentication REST Controllers
-**Labels:** `day-1`, `backend`, `authentication`, `priority-high`
-**Assignee:** Developer
-**Milestone:** Day 1 Afternoon
-
-**Description:**
-Create REST endpoints for user registration and login functionality.
-
-**Acceptance Criteria:**
-- [ ] Create AuthController with signup and signin endpoints
-- [ ] Implement request/response DTOs
-- [ ] Add input validation
-- [ ] Implement proper error handling
+- [ ] Create AuthController with signup and login endpoints
+- [ ] Implement basic request/response DTOs
+- [ ] Add password hashing with BCrypt
 - [ ] Return JWT tokens on successful authentication
-- [ ] Test endpoints with Postman/curl
-- [ ] Add global exception handling
+- [ ] Test endpoints with simple curl commands
 
-**Endpoints to Create:**
+**Essential Endpoints:**
 ```
-POST /api/auth/signup
-POST /api/auth/signin
-POST /api/auth/signout
-GET /api/auth/me
+POST /api/auth/register
+POST /api/auth/login
 ```
-
-**DTOs to Create:**
-```java
-- SignupRequest.java
-- LoginRequest.java
-- JwtResponse.java
-- MessageResponse.java
-```
-
-**Time Estimate:** 2 hours
 
 ---
 
-### Issue #6: Task Entity and Repository
-**Labels:** `day-1`, `backend`, `task-management`, `priority-high`
-**Assignee:** Developer
-**Milestone:** Day 1 Afternoon
+### Issue #5: Task Entity and CRUD API
+**Labels:** `phase-2-backend`, `task-management`, `critical`
+**Time Estimate:** 20 minutes
 
 **Description:**
-Create Task entity with relationships and repository layer for task management.
+Create Task entity and complete CRUD operations in minimal time.
 
 **Acceptance Criteria:**
-- [ ] Create Task entity with all required fields
-- [ ] Add JPA annotations and relationships
-- [ ] Create TaskRepository interface
-- [ ] Add custom query methods for filtering
-- [ ] Create TaskStatus and Priority enums
-- [ ] Add validation annotations
-- [ ] Test repository operations
-
-**Task Entity Fields:**
-```java
-- id (Long, @Id @GeneratedValue)
-- title (String, not null)
-- description (String)
-- status (TaskStatus enum - TODO, IN_PROGRESS, DONE)
-- priority (Priority enum - LOW, MEDIUM, HIGH)
-- dueDate (LocalDateTime)
-- assignedUser (User, @ManyToOne)
-- createdBy (User, @ManyToOne)
-- createdAt (LocalDateTime)
-- updatedAt (LocalDateTime)
-```
-
-**Time Estimate:** 1.5 hours
-
----
-
-### Issue #7: Task Service Layer Implementation
-**Labels:** `day-1`, `backend`, `task-management`, `priority-high`
-**Assignee:** Developer
-**Milestone:** Day 1 Evening
-
-**Description:**
-Implement business logic for task management operations.
-
-**Acceptance Criteria:**
-- [ ] Create TaskService interface and implementation
-- [ ] Implement CRUD operations for tasks
-- [ ] Add filtering and sorting capabilities
-- [ ] Implement authorization checks
-- [ ] Add proper exception handling
-- [ ] Create task DTOs for API responses
-- [ ] Write unit tests for service methods
-
-**Service Methods:**
-```java
-- createTask(TaskCreateRequest request, User user)
-- updateTask(Long id, TaskUpdateRequest request, User user)
-- deleteTask(Long id, User user)
-- getTaskById(Long id, User user)
-- getAllTasks(TaskFilter filter, User user)
-- updateTaskStatus(Long id, TaskStatus status, User user)
-```
-
-**Time Estimate:** 2 hours
-
----
-
-### Issue #8: Task REST Controllers
-**Labels:** `day-1`, `backend`, `task-management`, `priority-medium`
-**Assignee:** Developer
-**Milestone:** Day 1 Evening
-
-**Description:**
-Create REST endpoints for all task management operations.
-
-**Acceptance Criteria:**
+- [ ] Create Task entity (id, title, description, status, priority, assigneeId, creatorId, createdAt, updatedAt)
+- [ ] Create TaskStatus enum (TODO, IN_PROGRESS, DONE)
+- [ ] Create Priority enum (LOW, MEDIUM, HIGH)
+- [ ] Implement TaskRepository with basic queries
 - [ ] Create TaskController with all CRUD endpoints
-- [ ] Implement request/response DTOs
-- [ ] Add input validation and error handling
-- [ ] Implement filtering and pagination
-- [ ] Add proper HTTP status codes
-- [ ] Test all endpoints
-- [ ] Add API documentation comments
+- [ ] Add basic authorization checks
 
-**Endpoints to Create:**
+**Essential Endpoints:**
 ```
 GET /api/tasks
-GET /api/tasks/{id}
 POST /api/tasks
 PUT /api/tasks/{id}
 DELETE /api/tasks/{id}
-PATCH /api/tasks/{id}/status
+GET /api/users (for assignment dropdown)
 ```
-
-**Time Estimate:** 1.5 hours
 
 ---
 
-## 🌆 DAY 2 ISSUES
+## 🎨 PHASE 3: FRONTEND DEVELOPMENT (75-105 minutes)
 
-### Issue #9: Frontend Project Setup and Dependencies
-**Labels:** `day-2`, `frontend`, `setup`, `priority-high`
-**Assignee:** Developer
-**Milestone:** Day 2 Morning
+### Issue #6: Frontend Dependencies and Basic Setup
+**Labels:** `phase-3-frontend`, `critical`
+**Time Estimate:** 10 minutes
 
 **Description:**
-Set up React TypeScript project with all necessary dependencies and configuration.
+Install essential frontend dependencies and configure basic routing.
 
 **Acceptance Criteria:**
-- [ ] Install and configure Tailwind CSS
-- [ ] Set up React Router for navigation
-- [ ] Install Axios for API calls
-- [ ] Configure TypeScript strict mode
-- [ ] Set up environment variables
-- [ ] Create basic project structure
-- [ ] Test development server startup
+- [ ] Install React Router, Axios, and Tailwind CSS
+- [ ] Configure Tailwind CSS
+- [ ] Set up basic routing structure
+- [ ] Create environment configuration for API URL
+- [ ] Test development server
 
-**Dependencies to Install:**
-```json
-- react-router-dom
-- axios
-- tailwindcss
-- @heroicons/react (for icons)
-- react-hook-form (for forms)
-- react-hot-toast (for notifications)
+**Quick Dependencies:**
+```bash
+npm install react-router-dom axios
+npm install -D tailwindcss postcss autoprefixer
 ```
-
-**Time Estimate:** 1 hour
 
 ---
 
-### Issue #10: TypeScript Type Definitions
-**Labels:** `day-2`, `frontend`, `setup`, `priority-high`
-**Assignee:** Developer
-**Milestone:** Day 2 Morning
+### Issue #7: Authentication Context and API Service
+**Labels:** `phase-3-frontend`, `authentication`, `critical`
+**Time Estimate:** 15 minutes
 
 **Description:**
-Create comprehensive TypeScript interfaces and types for the application.
+Create authentication context and centralized API service for rapid development.
 
 **Acceptance Criteria:**
-- [ ] Create User interface
-- [ ] Create Task interface
-- [ ] Create API request/response types
-- [ ] Create authentication context types
-- [ ] Create form validation types
-- [ ] Create common utility types
-- [ ] Export all types from index file
-
-**Types to Create:**
-```typescript
-- User.ts
-- Task.ts
-- Auth.ts
-- Api.ts
-- Forms.ts
-- Common.ts
-```
-
-**Time Estimate:** 1 hour
-
----
-
-### Issue #11: Authentication Context and Hooks
-**Labels:** `day-2`, `frontend`, `authentication`, `priority-high`
-**Assignee:** Developer
-**Milestone:** Day 2 Morning
-
-**Description:**
-Implement React context for authentication state management.
-
-**Acceptance Criteria:**
-- [ ] Create AuthContext with React Context API
-- [ ] Implement useAuth hook
-- [ ] Add JWT token management
-- [ ] Implement login/logout functionality
-- [ ] Add automatic token refresh
-- [ ] Create protected route component
-- [ ] Handle authentication errors
+- [ ] Create AuthContext with login/logout functions
+- [ ] Set up Axios instance with JWT interceptors
+- [ ] Create authentication service functions
+- [ ] Implement token storage in localStorage
+- [ ] Add protected route wrapper
 
 **Files to Create:**
-```typescript
-- contexts/AuthContext.tsx
-- hooks/useAuth.ts
-- components/ProtectedRoute.tsx
-- utils/tokenUtils.ts
-```
-
-**Time Estimate:** 2 hours
+- `src/contexts/AuthContext.tsx`
+- `src/services/api.ts`
+- `src/components/ProtectedRoute.tsx`
 
 ---
 
-### Issue #12: API Service Layer
-**Labels:** `day-2`, `frontend`, `setup`, `priority-high`
-**Assignee:** Developer
-**Milestone:** Day 2 Morning
+### Issue #8: Login and Registration Forms
+**Labels:** `phase-3-frontend`, `authentication`, `critical`
+**Time Estimate:** 15 minutes
 
 **Description:**
-Create centralized API service layer for backend communication.
-
-**Acceptance Criteria:**
-- [ ] Configure Axios instance with base URL
-- [ ] Add request/response interceptors
-- [ ] Implement authentication service
-- [ ] Implement task service
-- [ ] Add error handling
-- [ ] Create API response types
-- [ ] Test API connections
-
-**Services to Create:**
-```typescript
-- services/api.ts (Axios configuration)
-- services/authService.ts
-- services/taskService.ts
-- services/userService.ts
-```
-
-**Time Estimate:** 1.5 hours
-
----
-
-### Issue #13: Authentication UI Components
-**Labels:** `day-2`, `frontend`, `authentication`, `ui/ux`, `priority-high`
-**Assignee:** Developer
-**Milestone:** Day 2 Afternoon
-
-**Description:**
-Create login and registration forms with validation.
+Create simple but functional authentication forms with basic styling.
 
 **Acceptance Criteria:**
 - [ ] Create Login component with form validation
 - [ ] Create Register component with form validation
-- [ ] Add responsive design with Tailwind CSS
-- [ ] Implement form error handling
-- [ ] Add loading states
-- [ ] Create toast notifications
-- [ ] Test form submissions
+- [ ] Apply basic Tailwind CSS styling
+- [ ] Implement form submission to backend API
+- [ ] Add error handling and loading states
+- [ ] Test authentication flow
 
-**Components to Create:**
-```typescript
-- components/auth/LoginForm.tsx
-- components/auth/RegisterForm.tsx
-- components/auth/AuthLayout.tsx
-- pages/auth/LoginPage.tsx
-- pages/auth/RegisterPage.tsx
-```
-
-**Time Estimate:** 2 hours
+**Components:**
+- `src/components/auth/LoginForm.tsx`
+- `src/components/auth/RegisterForm.tsx`
 
 ---
 
-### Issue #14: Task Management UI Components
-**Labels:** `day-2`, `frontend`, `task-management`, `ui/ux`, `priority-high`
-**Assignee:** Developer
-**Milestone:** Day 2 Afternoon
+### Issue #9: Task Management Dashboard
+**Labels:** `phase-3-frontend`, `task-management`, `critical`
+**Time Estimate:** 20 minutes
 
 **Description:**
-Create comprehensive task management interface.
+Create a functional task dashboard with CRUD operations and status columns.
 
 **Acceptance Criteria:**
-- [ ] Create TaskList component with filtering
-- [ ] Create TaskCard component for individual tasks
-- [ ] Create TaskForm for create/edit operations
+- [ ] Create TaskDashboard with three columns (TODO, IN_PROGRESS, DONE)
+- [ ] Implement TaskCard component for individual tasks
+- [ ] Create TaskForm modal for create/edit operations
 - [ ] Add task status update functionality
-- [ ] Implement drag and drop (bonus)
-- [ ] Add responsive design
-- [ ] Create task detail modal
+- [ ] Implement task filtering by status and assignee
+- [ ] Connect to backend API with proper error handling
 
-**Components to Create:**
-```typescript
-- components/tasks/TaskList.tsx
-- components/tasks/TaskCard.tsx
-- components/tasks/TaskForm.tsx
-- components/tasks/TaskFilter.tsx
-- components/tasks/TaskDetailModal.tsx
-- pages/tasks/TasksPage.tsx
-```
-
-**Time Estimate:** 2.5 hours
+**Components:**
+- `src/components/tasks/TaskDashboard.tsx`
+- `src/components/tasks/TaskCard.tsx`
+- `src/components/tasks/TaskForm.tsx`
 
 ---
 
-### Issue #15: Navigation and Layout Components
-**Labels:** `day-2`, `frontend`, `ui/ux`, `priority-medium`
-**Assignee:** Developer
-**Milestone:** Day 2 Afternoon
+## 🔧 PHASE 4: INTEGRATION & TESTING (105-120 minutes)
+
+### Issue #10: End-to-End Integration and Basic Testing
+**Labels:** `phase-4-integration`, `critical`
+**Time Estimate:** 10 minutes
 
 **Description:**
-Create navigation, header, and layout components for the application.
+Ensure complete integration between frontend and backend with basic functionality testing.
 
 **Acceptance Criteria:**
-- [ ] Create Header component with navigation
-- [ ] Create Sidebar component (optional)
-- [ ] Create Footer component
-- [ ] Create main Layout component
-- [ ] Add user profile dropdown
-- [ ] Implement logout functionality
-- [ ] Add responsive mobile menu
-
-**Components to Create:**
-```typescript
-- components/layout/Header.tsx
-- components/layout/Layout.tsx
-- components/layout/Navigation.tsx
-- components/layout/UserMenu.tsx
-```
-
-**Time Estimate:** 1.5 hours
+- [ ] Test complete authentication flow (register → login → dashboard)
+- [ ] Test all task CRUD operations
+- [ ] Verify task status transitions work correctly
+- [ ] Test task assignment to different users
+- [ ] Ensure proper error handling for invalid operations
+- [ ] Test responsive design on mobile and desktop
 
 ---
 
-### Issue #16: State Management and Custom Hooks
-**Labels:** `day-2`, `frontend`, `priority-medium`
-**Assignee:** Developer
-**Milestone:** Day 2 Afternoon
+### Issue #11: Seed Data and Final Polish
+**Labels:** `phase-4-integration`, `important`
+**Time Estimate:** 5 minutes
 
 **Description:**
-Implement custom hooks for state management and API operations.
+Add sample data and final touches for demonstration.
 
 **Acceptance Criteria:**
-- [ ] Create useTasks hook for task operations
-- [ ] Create useUsers hook for user operations
-- [ ] Implement loading and error states
-- [ ] Add optimistic updates
-- [ ] Create useLocalStorage hook
-- [ ] Add data caching strategies
-- [ ] Test all custom hooks
-
-**Hooks to Create:**
-```typescript
-- hooks/useTasks.ts
-- hooks/useUsers.ts
-- hooks/useLocalStorage.ts
-- hooks/useApi.ts
-```
-
-**Time Estimate:** 1.5 hours
+- [ ] Create seed data with 2 users (admin@example.com, user@example.com)
+- [ ] Add 5-10 sample tasks with different statuses and assignments
+- [ ] Test application with sample data
+- [ ] Add basic navigation and logout functionality
+- [ ] Ensure application is production-ready
 
 ---
 
-### Issue #17: Error Handling and Loading States
-**Labels:** `day-2`, `frontend`, `ui/ux`, `priority-medium`
-**Assignee:** Developer
-**Milestone:** Day 2 Evening
+## 🏆 BONUS FEATURES (If Time Remaining)
+
+### Issue #12: Advanced UI Features
+**Labels:** `nice-to-have`, `frontend`
+**Time Estimate:** Variable
 
 **Description:**
-Implement comprehensive error handling and loading states throughout the application.
+Implement bonus features if time permits.
 
-**Acceptance Criteria:**
-- [ ] Create global error boundary
-- [ ] Add loading spinners for async operations
-- [ ] Create error message components
-- [ ] Implement toast notifications
-- [ ] Add retry mechanisms
-- [ ] Create 404 and error pages
-- [ ] Test error scenarios
-
-**Components to Create:**
-```typescript
-- components/common/ErrorBoundary.tsx
-- components/common/LoadingSpinner.tsx
-- components/common/ErrorMessage.tsx
-- components/common/Toast.tsx
-- pages/NotFoundPage.tsx
-- pages/ErrorPage.tsx
-```
-
-**Time Estimate:** 1 hour
+**Possible Enhancements:**
+- [ ] Drag and drop task reordering
+- [ ] Task comments/activity log
+- [ ] Real-time updates with WebSocket
+- [ ] Advanced filtering and search
+- [ ] Dark mode toggle
+- [ ] Task due dates and notifications
 
 ---
 
-### Issue #18: Responsive Design and Mobile Optimization
-**Labels:** `day-2`, `frontend`, `ui/ux`, `priority-medium`
-**Assignee:** Developer
-**Milestone:** Day 2 Evening
+## 📊 Time Management Summary
 
-**Description:**
-Ensure the application is fully responsive and mobile-friendly.
+**Critical Path (Must Complete):**
+- **Phase 1 (0-30 min):** Issues #1, #2
+- **Phase 2 (30-75 min):** Issues #3, #4, #5
+- **Phase 3 (75-105 min):** Issues #6, #7, #8, #9
+- **Phase 4 (105-120 min):** Issues #10, #11
 
-**Acceptance Criteria:**
-- [ ] Test all components on mobile devices
-- [ ] Optimize forms for mobile input
-- [ ] Add touch-friendly interactions
-- [ ] Test tablet and desktop layouts
-- [ ] Optimize loading performance
-- [ ] Add progressive web app features (bonus)
-- [ ] Test cross-browser compatibility
+**Total Critical Issues:** 11
+**Estimated Time:** 115 minutes
+**Buffer Time:** 5 minutes
 
-**Time Estimate:** 1 hour
+**Success Criteria:**
+- ✅ Working authentication (register, login, logout)
+- ✅ Complete task CRUD operations
+- ✅ Task status management (TODO → IN_PROGRESS → DONE)
+- ✅ User assignment functionality
+- ✅ Responsive UI with proper error handling
+- ✅ JWT-based security implementation
 
----
+**Architecture Delivered:**
+- Spring Boot backend with H2 database
+- React TypeScript frontend
+- JWT authentication
+- RESTful API design
+- Responsive UI with Tailwind CSS
+- Proper error handling and validation
 
-### Issue #19: Testing Implementation
-**Labels:** `day-2`, `testing`, `priority-low`
-**Assignee:** Developer
-**Milestone:** Day 2 Evening
-
-**Description:**
-Add basic testing for critical components and functionality.
-
-**Acceptance Criteria:**
-- [ ] Write unit tests for authentication service
-- [ ] Test critical React components
-- [ ] Add integration tests for API calls
-- [ ] Test form validation
-- [ ] Add snapshot tests for UI components
-- [ ] Test error scenarios
-- [ ] Achieve reasonable test coverage
-
-**Tests to Create:**
-```typescript
-- __tests__/services/authService.test.ts
-- __tests__/components/LoginForm.test.tsx
-- __tests__/components/TaskList.test.tsx
-- __tests__/hooks/useAuth.test.ts
-```
-
-**Time Estimate:** 1 hour
+This streamlined approach focuses on delivering a working full-stack application within the 2-hour constraint while maintaining code quality and demonstrating full-stack development skills.
+This streamlined approach focuses on delivering a working full-stack application within the 2-hour constraint while maintaining code quality and demonstrating full-stack development skills.
 
 ---
 
-### Issue #20: Documentation and Deployment Preparation
-**Labels:** `day-2`, `documentation`, `priority-low`
-**Assignee:** Developer
-**Milestone:** Day 2 Evening
+## 📋 Detailed Implementation Guidelines
 
-**Description:**
-Complete documentation and prepare for deployment.
+### Backend Implementation Tips:
+1. **Use Spring Initializr** for rapid project setup with dependencies
+2. **Minimal Configuration** - focus on application.properties essentials
+3. **Combined Approach** - implement related features together (Entity + Repository + Controller)
+4. **H2 Database** - use in-memory database for speed
+5. **Basic Validation** - use Bean Validation annotations sparingly
 
-**Acceptance Criteria:**
-- [ ] Update README.md with setup instructions
-- [ ] Document API endpoints
-- [ ] Create deployment guide
-- [ ] Add environment variable documentation
-- [ ] Create user guide (basic)
-- [ ] Prepare production build
-- [ ] Test production build locally
+### Frontend Implementation Tips:
+1. **Create React App** with TypeScript template for quick setup
+2. **Tailwind CSS** for rapid styling without custom CSS
+3. **Context API** instead of Redux for simpler state management
+4. **Functional Components** with hooks throughout
+5. **Minimal Dependencies** - only install what's absolutely necessary
 
-**Documentation to Create:**
-```markdown
-- API.md (API documentation)
-- DEPLOYMENT.md (deployment guide)
-- USER_GUIDE.md (user manual)
-- TROUBLESHOOTING.md (common issues)
-```
+### Time-Saving Strategies:
+1. **Skip Complex Validation** - implement basic validation only
+2. **Use Default Styling** - leverage Tailwind's utility classes
+3. **Minimal Error Handling** - basic try-catch and user feedback
+4. **No Complex Testing** - focus on manual testing during development
+5. **Seed Data** - create sample data programmatically
 
-**Time Estimate:** 1 hour
+### Quality Assurance:
+- Test each phase completion before moving to next phase
+- Ensure authentication works before implementing tasks
+- Verify API endpoints with browser/Postman quickly
+- Test responsive design throughout development
 
----
-
-## 🏃‍♂️ BONUS ISSUES (If Time Permits)
-
-### Issue #21: Dark Mode Theme Toggle
-**Labels:** `bonus`, `frontend`, `ui/ux`, `priority-low`
-
-**Description:**
-Implement dark/light theme toggle functionality.
-
-**Time Estimate:** 1 hour
-
----
-
-### Issue #22: Task Drag and Drop Reordering
-**Labels:** `bonus`, `frontend`, `task-management`, `priority-low`
-
-**Description:**
-Add drag and drop functionality for task reordering.
-
-**Time Estimate:** 2 hours
-
----
-
-### Issue #23: Real-time Updates with WebSockets
-**Labels:** `bonus`, `backend`, `frontend`, `priority-low`
-
-**Description:**
-Implement real-time task updates using WebSockets.
-
-**Time Estimate:** 3 hours
-
----
-
-### Issue #24: Email Notifications
-**Labels:** `bonus`, `backend`, `priority-low`
-
-**Description:**
-Add email notification system for task assignments and updates.
-
-**Time Estimate:** 2 hours
-
----
-
-### Issue #25: Advanced Filtering and Search
-**Labels:** `bonus`, `frontend`, `backend`, `priority-low`
-
-**Description:**
-Implement advanced filtering, search, and sorting capabilities.
-
-**Time Estimate:** 2 hours
-
----
-
-## 📊 Issue Summary
-
-**Total Issues:** 25 (20 main + 5 bonus)
-**Day 1 Issues:** 8 (Backend focus)
-**Day 2 Issues:** 12 (Frontend focus)
-**Bonus Issues:** 5 (Optional enhancements)
-
-**Priority Breakdown:**
-- High Priority: 15 issues
-- Medium Priority: 5 issues  
-- Low Priority: 5 issues
-
-**Estimated Time:** 30+ hours total
-**Realistic 2-Day Time:** 16 hours (8 hours per day)
-
-## 🎯 Critical Path for 2-Day Success
-
-**Must Complete (Day 1):**
-- Issues #1, #2, #3, #4, #5, #6, #7
-
-**Must Complete (Day 2):**
-- Issues #9, #10, #11, #12, #13, #14
-
-**Nice to Have:**
-- Issues #8, #15, #16, #17, #18
-
-**Optional:**
-- Issues #19, #20, #21-25
-
-This breakdown provides a realistic roadmap for implementing a functional Task Management System in 2 days while maintaining code quality and best practices.
+This issue breakdown ensures successful delivery of a working Task Management System within the 2-hour coding assignment timeframe.
