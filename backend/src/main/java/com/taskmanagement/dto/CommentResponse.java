@@ -8,6 +8,7 @@ public class CommentResponse {
     private String content;
     private Long taskId;
     private Long authorId;
+    private String authorUsername;
     private LocalDateTime createdAt;
 
     public CommentResponse() {}
@@ -18,6 +19,14 @@ public class CommentResponse {
         this.taskId = comment.getTaskId();
         this.authorId = comment.getAuthorId();
         this.createdAt = comment.getCreatedAt();
+    }
+
+    public void setAuthorUsername(String username) {
+        this.authorUsername = username;
+    }
+
+    public String getAuthorUsername() {
+        return authorUsername;
     }
 
     public Long getId() {

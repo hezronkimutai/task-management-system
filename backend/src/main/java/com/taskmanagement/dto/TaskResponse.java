@@ -3,6 +3,7 @@ package com.taskmanagement.dto;
 import com.taskmanagement.entity.Priority;
 import com.taskmanagement.entity.Task;
 import com.taskmanagement.entity.TaskStatus;
+import com.taskmanagement.dto.CommentResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
@@ -39,6 +40,7 @@ public class TaskResponse {
 
     @Schema(description = "Task last update timestamp", example = "2023-01-01T10:30:00")
     private LocalDateTime updatedAt;
+    private java.util.List<CommentResponse> comments;
 
     // Constructors
     public TaskResponse() {}
@@ -53,6 +55,12 @@ public class TaskResponse {
         this.creatorId = task.getCreatorId();
         this.createdAt = task.getCreatedAt();
         this.updatedAt = task.getUpdatedAt();
+        this.comments = java.util.Collections.emptyList();
+    }
+
+    public TaskResponse(Task task, java.util.List<CommentResponse> comments) {
+        this(task);
+        this.comments = comments == null ? java.util.Collections.emptyList() : comments;
     }
 
     public TaskResponse(Long id, String title, String description, TaskStatus status, Priority priority, 

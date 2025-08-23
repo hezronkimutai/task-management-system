@@ -56,14 +56,20 @@ public class CommentController {
     public ResponseEntity<CommentResponse> createComment(@Valid @RequestBody CommentCreateRequest request) {
         Long userId = getCurrentUserId();
         Comment created = commentService.createComment(request, userId);
-        return ResponseEntity.ok(new CommentResponse(created));
+    CommentResponse resp = new CommentResponse(created);
+    userRepository.findById(created.getAuthorId()).ifPresent(u -> resp.setAuthorUsername(u.getUsername()));
+    return ResponseEntity.ok(resp);
     }
 
     @GetMapping("/task/{taskId}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<List<CommentResponse>> getCommentsForTask(@PathVariable Long taskId) {
         List<Comment> comments = commentService.getCommentsByTaskId(taskId);
-        List<CommentResponse> responses = comments.stream().map(CommentResponse::new).collect(Collectors.toList());
+        List<CommentResponse> responses = comments.stream().map(c -> {
+            CommentResponse r = new CommentResponse(c);
+            userRepository.findById(c.getAuthorId()).ifPresent(u -> r.setAuthorUsername(u.getUsername()));
+            return r;
+        }).collect(Collectors.toList());
         return ResponseEntity.ok(responses);
     }
 
@@ -72,7 +78,9 @@ public class CommentController {
     public ResponseEntity<CommentResponse> updateComment(@PathVariable Long id, @RequestBody CommentCreateRequest request) {
         Long userId = getCurrentUserId();
         Comment updated = commentService.updateComment(id, request.getContent(), userId);
-        return ResponseEntity.ok(new CommentResponse(updated));
+    CommentResponse resp = new CommentResponse(updated);
+    userRepository.findById(updated.getAuthorId()).ifPresent(u -> resp.setAuthorUsername(u.getUsername()));
+    return ResponseEntity.ok(resp);
     }
 
     @DeleteMapping("/{id}")

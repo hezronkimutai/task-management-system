@@ -61,17 +61,25 @@ const TaskDashboard: React.FC = () => {
   const handleCreateOrUpdate = async (payload: any) => {
     try {
       if (payload.id) {
-        const updated = await apiClient.put<TaskType>(`/api/tasks/${payload.id}`, payload);
-        setTasks((t) => t.map((x) => (x.id === updated.id ? updated : x)));
+        await apiClient.put<TaskType>(`/api/tasks/${payload.id}`, payload);
+        // refresh tasks from server to ensure consistent view
+        await fetchTasks(filterStatus, filterAssignee, filterAssignee === 'UNASSIGNED');
       } else {
-        const created = await apiClient.post<TaskType>('/api/tasks', payload);
-        setTasks((t) => [created, ...t]);
+        await apiClient.post<TaskType>('/api/tasks', payload);
+        // fetch latest tasks immediately so UI reflects server state (and respects filters)
+        await fetchTasks(filterStatus, filterAssignee, filterAssignee === 'UNASSIGNED');
       }
       setOpenForm(false);
     } catch (err: any) {
       setError(err?.response?.data?.message || err?.message || 'Failed to save task');
     }
   };
+
+  React.useEffect(() => {
+    const onTasksRefresh = () => fetchTasks(filterStatus, filterAssignee, filterAssignee === 'UNASSIGNED');
+    window.addEventListener('tasks:refresh', onTasksRefresh);
+    return () => window.removeEventListener('tasks:refresh', onTasksRefresh);
+  }, [filterStatus, filterAssignee]);
 
   const handleDelete = async (taskId: number) => {
     try {

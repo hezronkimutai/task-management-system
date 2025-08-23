@@ -1,5 +1,7 @@
 import React from 'react';
 import { Box, Paper, Typography, IconButton, Menu, MenuItem, Tooltip, Chip, Avatar } from '@mui/material';
+import CommentList from './CommentList';
+import CommentForm from './CommentForm';
 import { Draggable } from '@hello-pangea/dnd';
 
 type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'DONE';
@@ -37,6 +39,7 @@ const statusOptions: TaskStatus[] = ['TODO', 'IN_PROGRESS', 'DONE'];
 
 const TaskCard: React.FC<Props> = ({ task, users, onEdit, onDelete, onStatusChange, draggableId, index }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [showComments, setShowComments] = React.useState(false);
 
   const assignee = users.find((u) => u.id === task.assigneeId);
 
@@ -93,6 +96,15 @@ const TaskCard: React.FC<Props> = ({ task, users, onEdit, onDelete, onStatusChan
                 </IconButton>
               </Tooltip>
               <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={closeMenu}>
+                <MenuItem
+                  onClick={() => {
+                    closeMenu();
+                    // navigate to task overview
+                    window.location.href = `/tasks/${task.id}`;
+                  }}
+                >
+                  View
+                </MenuItem>
                 {statusOptions.map((s) => (
                   <MenuItem key={s} onClick={() => handleStatus(s as TaskStatus)}>
                     Move to {s}
@@ -151,6 +163,14 @@ const TaskCard: React.FC<Props> = ({ task, users, onEdit, onDelete, onStatusChan
             </IconButton>
           </Tooltip>
           <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={closeMenu}>
+            <MenuItem
+              onClick={() => {
+                closeMenu();
+                setShowComments((s) => !s);
+              }}
+            >
+              {showComments ? 'Hide comments' : 'Show comments'}
+            </MenuItem>
             {statusOptions.map((s) => (
               <MenuItem key={s} onClick={() => handleStatus(s as TaskStatus)}>
                 Move to {s}
@@ -176,6 +196,12 @@ const TaskCard: React.FC<Props> = ({ task, users, onEdit, onDelete, onStatusChan
         </Box>
       </Box>
       </Paper>
+      {showComments && (
+        <Box sx={{ ml: 1, mr: 1 }}>
+          <CommentForm taskId={task.id} onCreated={() => { /* re-render by key/refresh */ }} />
+          <CommentList taskId={task.id} />
+        </Box>
+      )}
     </Box>
   );
 };

@@ -7,6 +7,7 @@ import NotFound from './pages/NotFound';
 import LoginForm from './components/auth/LoginForm';
 import RegisterForm from './components/auth/RegisterForm';
 import TaskDashboard from './components/tasks/TaskDashboard';
+import TaskOverview from './pages/TaskOverview';
 import { useAuth } from './contexts/AuthContext';
 
 function App() {
@@ -49,6 +50,7 @@ function App() {
             <Route path="/login" element={<LoginForm />} />
             <Route path="/register" element={<RegisterForm />} />
             <Route path="/tasks" element={<TaskDashboard />} />
+            <Route path="/tasks/:id" element={<TaskOverview />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Box>
