@@ -1,4 +1,4 @@
-import apiClient from './apiClient';
+import api from './api';
 import config from '../config/config';
 
 /**
@@ -48,7 +48,7 @@ class AuthService {
    */
   async login(credentials: LoginRequest): Promise<AuthResponse> {
     try {
-      const response = await apiClient.post<AuthResponse>('/api/auth/login', credentials);
+  const response = await api.post<AuthResponse>('/api/auth/login', credentials).then(r => r.data);
       
       // Store token in localStorage
       localStorage.setItem(config.auth.tokenKey, response.token);
@@ -71,7 +71,7 @@ class AuthService {
    */
   async register(userData: RegisterRequest): Promise<AuthResponse> {
     try {
-      const response = await apiClient.post<AuthResponse>('/api/auth/register', userData);
+  const response = await api.post<AuthResponse>('/api/auth/register', userData).then(r => r.data);
       
       // Store token in localStorage
       localStorage.setItem(config.auth.tokenKey, response.token);
@@ -105,8 +105,8 @@ class AuthService {
    */
   async getCurrentUser(): Promise<User> {
     try {
-      const response = await apiClient.get<User>('/api/auth/me');
-      return response;
+  const response = await api.get<User>('/api/auth/me').then(r => r.data);
+  return response;
     } catch (error) {
       if (config.features.enableDebug) {
         console.error('Get current user error:', error);
@@ -148,9 +148,9 @@ class AuthService {
    */
   async refreshToken(): Promise<string | null> {
     try {
-      const response = await apiClient.post<{ token: string }>('/api/auth/refresh');
-      localStorage.setItem(config.auth.tokenKey, response.token);
-      return response.token;
+  const response = await api.post<{ token: string }>('/api/auth/refresh').then(r => r.data);
+  localStorage.setItem(config.auth.tokenKey, response.token);
+  return response.token;
     } catch (error) {
       if (config.features.enableDebug) {
         console.error('Token refresh error:', error);
