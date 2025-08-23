@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Box, Button, Grid, Paper, Typography, Select, MenuItem, FormControl, InputLabel, Snackbar, Alert } from '@mui/material';
+import { Box, Button, Grid, Paper, Typography, Select, MenuItem, FormControl, InputLabel, Snackbar, Alert, Tabs, Tab, useMediaQuery, useTheme } from '@mui/material';
 import apiClient from '../../services/apiClient';
 import TaskCard, { Task as TaskType } from './TaskCard';
 import TaskForm from './TaskForm';
@@ -97,10 +97,19 @@ const TaskDashboard: React.FC = () => {
     { key: 'DONE', title: 'Done' },
   ];
 
+  const theme = useTheme();
+  const isSmall = useMediaQuery(theme.breakpoints.down('md'));
+  const [activeTab, setActiveTab] = React.useState<string>('TODO');
+
+  // keep activeTab in sync with filterStatus when filters are changed externally
+  useEffect(() => {
+    if (filterStatus && filterStatus !== 'ALL') setActiveTab(filterStatus);
+  }, [filterStatus]);
+
   return (
     <Box>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        <Typography variant="h5">Task Dashboard</Typography>
+        <Typography variant="h5" className="accent">Task Dashboard</Typography>
         <Box>
           <FormControl sx={{ mr: 1 }} size="small">
             <InputLabel id="filter-status">Status</InputLabel>
@@ -123,28 +132,51 @@ const TaskDashboard: React.FC = () => {
               ))}
             </Select>
           </FormControl>
-          <Button variant="contained" onClick={openCreate}>
+          <Button variant="contained" onClick={openCreate} className="btn-accent">
             New Task
           </Button>
         </Box>
       </Box>
 
-      <Grid container spacing={2}>
-        {columns.map((col) => (
-          <Grid item xs={12} md={4} key={col.key}>
-            <Paper sx={{ p: 1, minHeight: 300 }}>
-              <Typography variant="h6" sx={{ mb: 1 }}>
-                {col.title}
+      {isSmall ? (
+        <Box>
+          <Tabs value={activeTab} onChange={(e, v) => { setActiveTab(String(v)); setFilterAssignee('ALL'); setFilterStatus(String(v)); }} variant="fullWidth" textColor="inherit" indicatorColor="primary">
+            {columns.map((c) => (
+              <Tab key={c.key} label={c.title} value={c.key} />
+            ))}
+          </Tabs>
+
+          <Box mt={2}>
+            <Paper className="task-column fancy-card" sx={{ p: 1, minHeight: 300 }}>
+              <Typography variant="h6" sx={{ mb: 1 }} className="small-muted">
+                {columns.find((c) => c.key === activeTab)?.title}
               </Typography>
               {tasks
-                .filter((t) => t.status === col.key)
+                .filter((t) => t.status === activeTab)
                 .map((task) => (
                   <TaskCard key={task.id} task={task} users={users} onEdit={(t) => { setEditing(t); setOpenForm(true); }} onDelete={handleDelete} onStatusChange={handleStatusChange} />
                 ))}
             </Paper>
-          </Grid>
-        ))}
-      </Grid>
+          </Box>
+        </Box>
+      ) : (
+        <Grid container spacing={2} className="dashboard-grid">
+          {columns.map((col) => (
+            <Grid item xs={12} md={4} key={col.key}>
+              <Paper className="task-column fancy-card" sx={{ p: 1, minHeight: 300 }}>
+                <Typography variant="h6" sx={{ mb: 1 }} className="small-muted">
+                  {col.title}
+                </Typography>
+                {tasks
+                  .filter((t) => t.status === col.key)
+                  .map((task) => (
+                    <TaskCard key={task.id} task={task} users={users} onEdit={(t) => { setEditing(t); setOpenForm(true); }} onDelete={handleDelete} onStatusChange={handleStatusChange} />
+                  ))}
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
+      )}
 
       <TaskForm open={openForm} onClose={() => setOpenForm(false)} onSubmit={handleCreateOrUpdate} initial={editing || { title: '', status: 'TODO', priority: 'MEDIUM' }} users={users} />
 

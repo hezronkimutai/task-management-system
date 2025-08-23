@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Paper, Typography, IconButton, Menu, MenuItem, Tooltip } from '@mui/material';
+import { Box, Paper, Typography, IconButton, Menu, MenuItem, Tooltip, Chip, Avatar } from '@mui/material';
 
 type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'DONE';
 type Priority = 'LOW' | 'MEDIUM' | 'HIGH';
@@ -44,20 +44,30 @@ const TaskCard: React.FC<Props> = ({ task, users, onEdit, onDelete, onStatusChan
     if (status !== task.status) onStatusChange(task, status);
   };
 
+  const priorityColor: Record<Priority, string> = {
+    LOW: '#6EE7B7',
+    MEDIUM: '#FFD166',
+    HIGH: '#FF6B6B',
+  };
+
   return (
-    <Paper sx={{ p: 1, mb: 1 }} elevation={1}>
+    <Paper className="task-card" sx={{ p: 1, mb: 1, borderLeft: `6px solid ${priorityColor[task.priority]}` }} elevation={1}>
       <Box display="flex" justifyContent="space-between" alignItems="flex-start">
         <Box>
-          <Typography variant="subtitle1">{task.title}</Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="subtitle1" className="task-title">{task.title}</Typography>
+          <Typography variant="body2" className="task-meta">
             {task.description}
           </Typography>
-          <Box mt={1}>
-            <Typography variant="caption">Priority: {task.priority}</Typography>
+          <Box mt={1} display="flex" alignItems="center" gap={1}>
+            <Chip label={task.priority} size="small" sx={{ bgcolor: priorityColor[task.priority], color: '#021124', fontWeight: 700 }} />
             {assignee && (
-              <Typography variant="caption" sx={{ ml: 1 }}>
-                • Assignee: {assignee.username}
-              </Typography>
+              <Chip
+                size="small"
+                avatar={<Avatar sx={{ width: 20, height: 20, fontSize: 12 }}>{assignee.username.charAt(0).toUpperCase()}</Avatar>}
+                label={assignee.username}
+                variant="outlined"
+                sx={{ color: 'rgba(255,255,255,0.9)', borderColor: 'rgba(255,255,255,0.06)' }}
+              />
             )}
           </Box>
         </Box>
