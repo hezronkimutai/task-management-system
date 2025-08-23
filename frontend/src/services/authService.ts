@@ -44,24 +44,28 @@ export interface AuthResponse {
  */
 class AuthService {
   /**
+   * Normalize token string by removing any leading 'Bearer ' prefix.
+   * Ensures we store and return the raw JWT only.
+   */
+  private normalizeToken(token: string | null): string | null {
+    if (!token) return null;
+    return token.startsWith('Bearer ') ? token.slice(7) : token;
+  }
+  /**
    * Login user with username and password
    */
   async login(credentials: LoginRequest): Promise<AuthResponse> {
     try {
-  const response = await api.post<AuthResponse>('/api/auth/login', credentials).then(r => r.data);
-      
-      // Store token in localStorage
-      localStorage.setItem(config.auth.tokenKey, response.token);
-      
-      if (config.features.enableDebug) {
-        console.log('Login successful:', response.user);
-      }
-      
+      const response = await api.post<AuthResponse>('/api/auth/login', credentials).then(r => r.data);
+
+     // Normalize and store token in localStorage (store raw JWT without 'Bearer ')
+      const raw = this.normalizeToken(response.token);
+      if (raw) localStorage.setItem(config.auth.tokenKey, raw);
+
       return response;
+
     } catch (error) {
-      if (config.features.enableDebug) {
-        console.error('Login error:', error);
-      }
+      // error handling intentionally suppressed from console to reduce noise
       throw error;
     }
   }
@@ -71,20 +75,17 @@ class AuthService {
    */
   async register(userData: RegisterRequest): Promise<AuthResponse> {
     try {
-  const response = await api.post<AuthResponse>('/api/auth/register', userData).then(r => r.data);
-      
-      // Store token in localStorage
-      localStorage.setItem(config.auth.tokenKey, response.token);
-      
-      if (config.features.enableDebug) {
-        console.log('Registration successful:', response.user);
-      }
-      
+      const response = await api.post<AuthResponse>('/api/auth/register', userData).then(r => r.data);
+
+      // Normalize and store token in localStorage (store raw JWT without 'Bearer ')
+      const raw = this.normalizeToken(response.token);
+      if (raw) localStorage.setItem(config.auth.tokenKey, raw);
+
+      // debug logging removed
+
       return response;
     } catch (error) {
-      if (config.features.enableDebug) {
-        console.error('Registration error:', error);
-      }
+      // error handling intentionally suppressed from console to reduce noise
       throw error;
     }
   }
@@ -93,11 +94,9 @@ class AuthService {
    * Logout user by removing token
    */
   logout(): void {
-    localStorage.removeItem(config.auth.tokenKey);
-    
-    if (config.features.enableDebug) {
-      console.log('User logged out');
-    }
+  localStorage.removeItem(config.auth.tokenKey);
+
+    // debug logging removed
   }
 
   /**
@@ -105,12 +104,10 @@ class AuthService {
    */
   async getCurrentUser(): Promise<User> {
     try {
-  const response = await api.get<User>('/api/auth/me').then(r => r.data);
-  return response;
+      const response = await api.get<User>('/api/auth/me').then(r => r.data);
+      return response;
     } catch (error) {
-      if (config.features.enableDebug) {
-        console.error('Get current user error:', error);
-      }
+      // debug logging removed
       throw error;
     }
   }
@@ -127,7 +124,13 @@ class AuthService {
    * Get stored JWT token
    */
   getToken(): string | null {
-    return localStorage.getItem(config.auth.tokenKey);
+    const stored = localStorage.getItem(config.auth.tokenKey);
+    const norm = this.normalizeToken(stored);
+    // If token was stored with a prefix, normalize it back into storage for consistency
+    if (stored && norm && stored !== norm) {
+      localStorage.setItem(config.auth.tokenKey, norm);
+    }
+    return norm;
   }
 
   /**
@@ -148,13 +151,12 @@ class AuthService {
    */
   async refreshToken(): Promise<string | null> {
     try {
-  const response = await api.post<{ token: string }>('/api/auth/refresh').then(r => r.data);
-  localStorage.setItem(config.auth.tokenKey, response.token);
-  return response.token;
+      const response = await api.post<{ token: string }>('/api/auth/refresh').then(r => r.data);
+      const raw = this.normalizeToken(response.token);
+      if (raw) localStorage.setItem(config.auth.tokenKey, raw);
+      return raw;
     } catch (error) {
-      if (config.features.enableDebug) {
-        console.error('Token refresh error:', error);
-      }
+      // debug logging removed
       this.logout();
       return null;
     }

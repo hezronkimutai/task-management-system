@@ -1,7 +1,8 @@
 import React from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { TextField, Button, Box, CircularProgress, Alert } from '@mui/material';
-import authService, { LoginRequest } from '../../services/authService';
+import { LoginRequest } from '../../services/authService';
+import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 type FormValues = LoginRequest;
@@ -12,12 +13,14 @@ const LoginForm: React.FC = () => {
   const [error, setError] = React.useState<string | null>(null);
   const navigate = useNavigate();
 
+  const { login } = useAuth();
+
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setError(null);
     setLoading(true);
     try {
-      await authService.login(data);
-      navigate('/');
+  await login(data);
+  navigate('/tasks');
     } catch (err: any) {
       setError(err?.response?.data?.message || err?.message || 'Login failed');
     } finally {

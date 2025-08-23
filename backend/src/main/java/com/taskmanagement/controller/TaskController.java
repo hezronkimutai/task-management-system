@@ -4,6 +4,7 @@ import com.taskmanagement.dto.TaskCreateRequest;
 import com.taskmanagement.dto.TaskResponse;
 import com.taskmanagement.dto.TaskUpdateRequest;
 import com.taskmanagement.entity.Task;
+import com.taskmanagement.entity.TaskStatus;
 import com.taskmanagement.exception.EntityNotFoundException;
 import com.taskmanagement.exception.UnauthorizedException;
 import com.taskmanagement.service.TaskService;
@@ -86,15 +87,28 @@ public class TaskController {
                     )
             )
     })
-    @GetMapping
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<List<TaskResponse>> getAllTasks() {
-        List<Task> tasks = taskService.getAllTasks();
-        List<TaskResponse> taskResponses = tasks.stream()
-                .map(TaskResponse::new)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(taskResponses);
-    }
+        @GetMapping
+        @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+        public ResponseEntity<List<TaskResponse>> getAllTasks(
+                        @RequestParam(value = "status", required = false) String status,
+                        @RequestParam(value = "assigneeId", required = false) Long assigneeId,
+                        @RequestParam(value = "unassigned", required = false, defaultValue = "false") boolean unassigned
+        ) {
+                TaskStatus parsedStatus = null;
+                if (status != null && !status.isBlank()) {
+                        try {
+                                parsedStatus = TaskStatus.valueOf(status);
+                        } catch (IllegalArgumentException e) {
+                                throw new EntityNotFoundException("Invalid status value: " + status);
+                        }
+                }
+
+                List<Task> tasks = taskService.getTasksFiltered(parsedStatus, assigneeId, unassigned);
+                List<TaskResponse> taskResponses = tasks.stream()
+                                .map(TaskResponse::new)
+                                .collect(Collectors.toList());
+                return ResponseEntity.ok(taskResponses);
+        }
 
     /**
      * Get task by ID.

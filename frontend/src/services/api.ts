@@ -23,12 +23,27 @@ const processQueue = (error: any, token: string | null = null) => {
 
 api.interceptors.request.use(
   (configReq) => {
-    const token = authService.getToken();
-    if (token) {
-      configReq.headers = configReq.headers || {};
-      configReq.headers.Authorization = `Bearer ${token}`;
+    // Ensure requests to /api/* use absolute backend baseURL when needed
+    try {
+      const urlCheck = String(configReq.url || '');
+      if ((configReq.baseURL == null || configReq.baseURL === '') && urlCheck.startsWith('/api/')) {
+        (configReq as any).baseURL = config.api.baseUrl && config.api.baseUrl.length ? config.api.baseUrl : window.location.origin;
+      }
+    } catch (_) {
+      // ignore when window isn't available
     }
-    if (config.features.enableDebug) console.log('API Request:', configReq);
+
+    try {
+      const stored = localStorage.getItem(config.auth.tokenKey);
+      const token = stored ? (stored.startsWith('Bearer ') ? stored.slice(7) : stored) : null;
+      if (token) {
+        configReq.headers = configReq.headers || {};
+        (configReq.headers as any).Authorization = `Bearer ${token}`;
+      }
+    } catch (e) {
+      // ignore localStorage access errors
+    }
+    // debug logging removed
     return configReq;
   },
   (error) => Promise.reject(error)
@@ -36,13 +51,13 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (resp) => {
-    if (config.features.enableDebug) console.log('API Response:', resp);
+  // debug logging removed
     return resp;
   },
   async (error) => {
     const originalRequest = error.config;
 
-    if (config.features.enableDebug) console.error('API Response Error:', error);
+  // debug logging removed
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       // Attempt refresh once

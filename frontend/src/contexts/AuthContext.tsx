@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import authService, { User, LoginRequest, RegisterRequest } from '../services/authService';
+import config from '../config/config';
 
 interface AuthContextType {
   user: User | null;
@@ -51,14 +52,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (credentials: LoginRequest) => {
     const resp = await authService.login(credentials);
-    setToken(resp.token);
+    // authService should store the token, but if for some reason it didn't
+    // (e.g., environment restriction), persist a normalized token here.
+    let stored = authService.getToken();
+    if (!stored && resp.token) {
+      const raw = resp.token.startsWith('Bearer ') ? resp.token.slice(7) : resp.token;
+      try {
+        localStorage.setItem(config.auth.tokenKey, raw);
+        stored = raw;
+      } catch (e) {
+        // ignore storage errors
+      }
+    }
+    setToken(stored);
     setUser(resp.user);
     return resp.user;
   };
 
   const register = async (data: RegisterRequest) => {
     const resp = await authService.register(data);
-    setToken(resp.token);
+    let stored = authService.getToken();
+    if (!stored && resp.token) {
+      const raw = resp.token.startsWith('Bearer ') ? resp.token.slice(7) : resp.token;
+      try {
+        localStorage.setItem(config.auth.tokenKey, raw);
+        stored = raw;
+      } catch (e) {
+        // ignore storage errors
+      }
+    }
+    setToken(stored);
     setUser(resp.user);
     return resp.user;
   };
