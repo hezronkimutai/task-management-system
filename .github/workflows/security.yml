@@ -81,10 +81,48 @@ jobs:
         echo "3. Evaluate if vulnerabilities affect production code"
         echo "4. For react-scripts vulnerabilities, monitor for updates"
       
+    - name: Cache OWASP NVD Database
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.m2/repository/org/owasp
+          backend/target/dependency-check-data
+        key: ${{ runner.os }}-owasp-nvd-${{ hashFiles('**/pom.xml') }}-v2
+        restore-keys: |
+          ${{ runner.os }}-owasp-nvd-${{ hashFiles('**/pom.xml') }}-
+          ${{ runner.os }}-owasp-nvd-
+          
     - name: Make Maven wrapper executable
       working-directory: ./backend
       run: chmod +x ./mvnw
       
     - name: Check for known vulnerabilities in backend
       working-directory: ./backend
-      run: ./mvnw org.owasp:dependency-check-maven:check
+      env:
+        # Use NVD API key if available (set as repository secret for better performance)
+        NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+      run: |
+        echo "🔍 Running OWASP Dependency Check..."
+        echo "📊 Scanning backend dependencies for known vulnerabilities..."
+        
+        if [ -n "$NVD_API_KEY" ]; then
+          echo "✅ Using NVD API key for faster updates"
+        else
+          echo "⚠️  No NVD API key provided - scan may take longer"
+          echo "💡 To speed up scans, add NVD_API_KEY as a repository secret"
+          echo "   Get a free API key from: https://nvd.nist.gov/developers/request-an-api-key"
+        fi
+        
+        # Run dependency check
+        ./mvnw org.owasp:dependency-check-maven:check
+        
+        echo ""
+        echo "📋 Scan completed. Check the reports in target/dependency-check/"
+        
+    - name: Upload OWASP Dependency Check results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: dependency-check-report
+        path: backend/target/dependency-check/
+        retention-days: 30
