@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { loginAndSetToken } from './helpers/auth';
 
 // E2E flows: create -> edit -> filter -> permissions checks
 const admin = { username: 'e2e-admin', password: 'Password123!' };
@@ -11,14 +12,8 @@ test.describe('Tasks E2E (create / edit / filters / permissions)', () => {
   });
 
   test('admin can create a task and user cannot delete a task they did not create', async ({ page, request }) => {
-    // Login as admin via backend to obtain token
-    const login = await request.post('http://localhost:8080/api/auth/login', { data: admin });
-    const body = await login.json();
-    const token = body?.token;
-    if (!token) throw new Error('Failed to login admin during e2e setup');
-
-    // Put token into localStorage and navigate to tasks
-    await page.addInitScript((t) => localStorage.setItem('taskmanagement_token', t), token);
+  // Login as admin via backend to obtain token and set localStorage
+  await loginAndSetToken(request, page, admin.username, admin.password);
     await page.goto('/tasks');
     await page.waitForLoadState('networkidle');
 
@@ -44,11 +39,7 @@ test.describe('Tasks E2E (create / edit / filters / permissions)', () => {
     // Logout admin (clear token) and login as plain user
     await page.evaluate(() => localStorage.removeItem('taskmanagement_token'));
 
-    const loginUser = await request.post('http://localhost:8080/api/auth/login', { data: user });
-    const userBody = await loginUser.json();
-    const userToken = userBody?.token;
-    if (!userToken) throw new Error('Failed to login user during e2e setup');
-    await page.addInitScript((t) => localStorage.setItem('taskmanagement_token', t), userToken);
+  await loginAndSetToken(request, page, user.username, user.password);
     await page.goto('/tasks');
     await page.waitForLoadState('networkidle');
 
@@ -70,20 +61,21 @@ test.describe('Tasks E2E (create / edit / filters / permissions)', () => {
 
   test('filters work: show only HIGH priority or TODO status', async ({ page, request }) => {
     // Login as admin and create two tasks with different priorities/status
-    const login = await request.post('http://localhost:8080/api/auth/login', { data: admin });
-    const body = await login.json();
-    const token = body?.token;
-    if (!token) throw new Error('Failed to login admin during e2e setup');
-    await page.addInitScript((t) => localStorage.setItem('taskmanagement_token', t), token);
+  await loginAndSetToken(request, page, admin.username, admin.password);
 
-    // create HIGH priority task
+    // create HIGH and LOW priority tasks via API using the admin token
+    const loginResp = await request.post('http://localhost:8080/api/auth/login', { data: admin });
+    const loginBody = await loginResp.json();
+    const apiToken = loginBody?.token;
+    if (!apiToken) throw new Error('Failed to obtain api token for admin');
+
     const high = await request.post('http://localhost:8080/api/tasks', {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${apiToken}` },
       data: { title: `High ${Math.random()}`, description: 'high', priority: 'HIGH', status: 'TODO' }
     });
     // create LOW priority task
     const low = await request.post('http://localhost:8080/api/tasks', {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${apiToken}` },
       data: { title: `Low ${Math.random()}`, description: 'low', priority: 'LOW', status: 'TODO' }
     });
 
