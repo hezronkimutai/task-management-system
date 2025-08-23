@@ -105,7 +105,7 @@ Implement essential authentication endpoints with minimal validation.
 - [ ] Implement basic request/response DTOs
 - [ ] Add password hashing with BCrypt
 - [ ] Return JWT tokens on successful authentication
-- [ ] Test endpoints with simple curl commands
+- [ ] Add unit tests for authentication functionality
 
 **Essential Endpoints:**
 ```
