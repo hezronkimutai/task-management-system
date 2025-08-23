@@ -1,15 +1,29 @@
 package com.taskmanagement.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * DTO for authentication response.
  */
+@Schema(description = "Authentication response containing JWT token and user information")
 public class AuthResponse {
 
+    @Schema(description = "JWT access token", example = "eyJhbGciOiJIUzUxMiJ9...")
     private String token;
+    
+    @Schema(description = "Token type", example = "Bearer")
     private String type = "Bearer";
+    
+    @Schema(description = "User ID", example = "1")
     private Long id;
+    
+    @Schema(description = "Username", example = "johndoe")
     private String username;
+    
+    @Schema(description = "User email", example = "john@example.com")
     private String email;
+    
+    @Schema(description = "User role", example = "USER")
     private String role;
 
     // Constructors

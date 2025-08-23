@@ -1,15 +1,19 @@
 package com.taskmanagement.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
 /**
  * DTO for login request.
  */
+@Schema(description = "Login request containing user credentials")
 public class LoginRequest {
 
+    @Schema(description = "Username for authentication", example = "johndoe", required = true)
     @NotBlank(message = "Username is required")
     private String username;
 
+    @Schema(description = "User password", example = "password123", required = true)
     @NotBlank(message = "Password is required")
     private String password;
 

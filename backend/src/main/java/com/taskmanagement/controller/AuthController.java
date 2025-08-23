@@ -6,6 +6,13 @@ import com.taskmanagement.dto.RegisterRequest;
 import com.taskmanagement.entity.User;
 import com.taskmanagement.service.UserService;
 import com.taskmanagement.util.JwtUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "*")
+@Tag(name = "Authentication", description = "Authentication endpoints for user registration and login")
 public class AuthController {
 
     @Autowired
@@ -38,6 +46,45 @@ public class AuthController {
      * @param registerRequest the registration request
      * @return authentication response with JWT token
      */
+    @Operation(
+            summary = "Register a new user",
+            description = "Create a new user account and return JWT token for authentication"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "User registered successfully",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = AuthResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                    {
+                                        "token": "eyJhbGciOiJIUzUxMiJ9...",
+                                        "id": 1,
+                                        "username": "johndoe",
+                                        "email": "john@example.com",
+                                        "role": "USER"
+                                    }
+                                    """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Registration failed - username or email already in use",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                    {
+                                        "error": "Registration failed: username or email already in use."
+                                    }
+                                    """
+                            )
+                    )
+            )
+    })
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
         // Check if username or email already exists
@@ -80,6 +127,45 @@ public class AuthController {
      * @param loginRequest the login request
      * @return authentication response with JWT token
      */
+    @Operation(
+            summary = "User login",
+            description = "Authenticate user credentials and return JWT token for authorization"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Login successful",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = AuthResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                    {
+                                        "token": "eyJhbGciOiJIUzUxMiJ9...",
+                                        "id": 1,
+                                        "username": "johndoe",
+                                        "email": "john@example.com",
+                                        "role": "USER"
+                                    }
+                                    """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Invalid username or password",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                    {
+                                        "error": "Invalid username or password"
+                                    }
+                                    """
+                            )
+                    )
+            )
+    })
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         try {

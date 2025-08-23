@@ -89,6 +89,8 @@ public class SecurityConfig {
                 // Public endpoints
                 auth.requestMatchers("/api/auth/**").permitAll();
                 auth.requestMatchers("/h2-console/**").permitAll();
+                // Swagger/OpenAPI endpoints
+                auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll();
                 // Only allow test endpoint in dev profile
                 if (environment.acceptsProfiles(Profiles.of("dev"))) {
                     auth.requestMatchers("/api/test/public").permitAll();

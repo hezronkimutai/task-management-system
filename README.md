@@ -10,6 +10,7 @@ A full-stack task management application built with Spring Boot (backend) and Re
 - **Maven**: 3.9.11 (wrapper)
 - **JWT**: 0.12.6 (JJWT)
 - **Database**: H2 (in-memory)
+- **API Documentation**: SpringDoc OpenAPI 2.7.0
 - **Build Tool**: Maven
 
 ### Frontend
@@ -118,6 +119,7 @@ The backend server will start on **http://localhost:8080**
 - REST API endpoints
 - H2 in-memory database
 - JWT authentication (JJWT 0.12.6)
+- Interactive API documentation with Swagger UI (SpringDoc OpenAPI 2.7.0)
 - CORS configuration for frontend integration
 - Database console available at: http://localhost:8080/h2-console
 - Latest security features with Spring Security 6.4.2
@@ -191,8 +193,26 @@ npm run build
 The backend provides REST API endpoints. Once running, you can access:
 
 - API Base URL: `http://localhost:8080`
+- **Swagger UI (API Documentation)**: `http://localhost:8080/swagger-ui/index.html`
+- **OpenAPI JSON**: `http://localhost:8080/v3/api-docs`
 - H2 Database Console: `http://localhost:8080/h2-console`
 - Health Check: `http://localhost:8080/actuator/health` (if actuator is enabled)
+
+### API Documentation
+
+The application includes comprehensive API documentation powered by **SpringDoc OpenAPI 2.7.0**:
+
+- **Interactive API Testing**: Use Swagger UI to test API endpoints directly in your browser
+- **Complete API Specification**: View all available endpoints, request/response schemas, and authentication requirements
+- **Authentication Support**: Swagger UI supports JWT token authentication for testing secured endpoints
+- **OpenAPI 3.0 Compliant**: Industry-standard API documentation format
+
+#### How to Use Swagger UI:
+1. Start the backend application
+2. Navigate to `http://localhost:8080/swagger-ui/index.html`
+3. Explore available endpoints and their documentation
+4. For authenticated endpoints, click "Authorize" and enter your JWT token
+5. Test endpoints directly from the interface
 
 ## Testing
 
@@ -260,6 +280,7 @@ The frontend is configured to connect to the backend at `http://localhost:8080`.
 - ✅ **Java**: Upgraded to Java 24.0.2 (latest stable)
 - ✅ **Spring Boot**: Updated to 3.4.1 (latest stable)
 - ✅ **JWT**: Updated to JJWT 0.12.6 (latest)
+- ✅ **SpringDoc OpenAPI**: Updated to 2.7.0 (latest, compatible with Spring Boot 3.4.1)
 - ✅ **Maven**: Using latest wrapper 3.9.11
 - ✅ **Dependencies**: All dependencies updated to latest compatible versions
 

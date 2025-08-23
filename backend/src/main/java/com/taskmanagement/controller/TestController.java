@@ -4,6 +4,13 @@ import com.taskmanagement.entity.Role;
 import com.taskmanagement.entity.User;
 import com.taskmanagement.service.UserService;
 import com.taskmanagement.util.JwtUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +29,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/test")
 @CrossOrigin(origins = "*")
+@Tag(name = "Test Endpoints", description = "Test endpoints for development and debugging")
 public class TestController {
 
     @Autowired
@@ -36,6 +44,29 @@ public class TestController {
     /**
      * Simple test endpoint to verify API connectivity for frontend
      */
+    @Operation(
+            summary = "Test API connectivity",
+            description = "Simple endpoint to verify that the backend API is running and accessible"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "API is running successfully",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                    {
+                                        "status": "success",
+                                        "message": "Backend API is running",
+                                        "timestamp": 1692781200000,
+                                        "environment": "default"
+                                    }
+                                    """
+                            )
+                    )
+            )
+    })
     @GetMapping
     public ResponseEntity<Map<String, Object>> testConnection() {
         Map<String, Object> response = new HashMap<>();
