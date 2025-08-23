@@ -40,8 +40,9 @@ const EnvironmentTest: React.FC = () => {
 
   const testApiConnectivity = async () => {
     try {
-      // Test API connectivity by making a simple request
-      const response = await fetch(config.api.baseUrl + '/api/test', {
+      // Test API connectivity by checking if the backend is responding
+      // Using the Swagger docs endpoint as it's always available
+      const response = await fetch(config.api.baseUrl + '/v3/api-docs', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

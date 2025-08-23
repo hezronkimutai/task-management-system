@@ -1,4 +1,4 @@
-package main.java.com.taskmanagement.config;
+package com.taskmanagement.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
