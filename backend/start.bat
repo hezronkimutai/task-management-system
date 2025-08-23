@@ -1,0 +1,3 @@
+@echo off
+echo Starting Task Management Backend...
+mvnw.cmd spring-boot:run
