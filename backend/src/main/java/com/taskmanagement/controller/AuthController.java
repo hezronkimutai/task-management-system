@@ -40,16 +40,11 @@ public class AuthController {
      */
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
-        // Check if username already exists
-        if (userService.existsByUsername(registerRequest.getUsername())) {
-            throw new RuntimeException("Username is already taken!");
+        // Check if username or email already exists
+        if (userService.existsByUsername(registerRequest.getUsername()) ||
+            userService.existsByEmail(registerRequest.getEmail())) {
+            throw new RuntimeException("Registration failed: username or email already in use.");
         }
-
-        // Check if email already exists
-        if (userService.existsByEmail(registerRequest.getEmail())) {
-            throw new RuntimeException("Email is already in use!");
-        }
-
         // Create new user
         User user = userService.createUser(
             registerRequest.getUsername(),
