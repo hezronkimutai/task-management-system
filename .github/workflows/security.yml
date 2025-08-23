@@ -120,7 +120,7 @@ jobs:
         echo "📋 Scan completed. Check the reports in target/dependency-check/"
         
     - name: Upload OWASP Dependency Check results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: dependency-check-report
