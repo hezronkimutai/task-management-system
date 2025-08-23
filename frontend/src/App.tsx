@@ -4,6 +4,8 @@ import { Routes, Route, Link } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Container, Box, Button } from '@mui/material';
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
+import LoginForm from './components/auth/LoginForm';
+import RegisterForm from './components/auth/RegisterForm';
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
             Task Management
           </Typography>
           <Button color="inherit" component={Link} to="/">Home</Button>
+          <Button color="inherit" component={Link} to="/login">Login</Button>
+          <Button color="inherit" component={Link} to="/register">Sign up</Button>
         </Toolbar>
       </AppBar>
 
@@ -21,6 +25,8 @@ function App() {
         <Box sx={{ mt: 4 }}>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/login" element={<LoginForm />} />
+            <Route path="/register" element={<RegisterForm />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Box>

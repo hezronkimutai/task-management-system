@@ -60,7 +60,7 @@ function getEnvNumber(key: string, defaultValue: number): number {
  */
 export const config: AppConfig = {
   api: {
-    baseUrl: getEnvVar('REACT_APP_API_BASE_URL', 'http://localhost:8081'),
+    baseUrl: getEnvVar('REACT_APP_API_BASE_URL', 'http://localhost:8080'),
     timeout: getEnvNumber('REACT_APP_API_TIMEOUT', 10000),
   },
   auth: {

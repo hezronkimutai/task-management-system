@@ -2,7 +2,7 @@ import config from './config';
 
 describe('config', () => {
   it('should have default configuration values', () => {
-    expect(config.api.baseUrl).toBe('http://localhost:8081');
+    expect(config.api.baseUrl).toBe('http://localhost:8080');
     expect(config.app.name).toBe('Task Management System Test');
     expect(config.app.environment).toBe('test');
     expect(config.auth.tokenKey).toBe('test_token');

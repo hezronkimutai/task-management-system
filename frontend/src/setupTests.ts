@@ -5,7 +5,7 @@
 import '@testing-library/jest-dom';
 
 // Set up environment variables for testing
-process.env.REACT_APP_API_BASE_URL = 'http://localhost:8081';
+process.env.REACT_APP_API_BASE_URL = 'http://localhost:8080';
 process.env.REACT_APP_APP_NAME = 'Task Management System Test';
 process.env.REACT_APP_APP_VERSION = '1.0.0';
 process.env.REACT_APP_ENVIRONMENT = 'test';
