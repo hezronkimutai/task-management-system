@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Box, Button, Grid, Paper, Typography, Select, MenuItem, FormControl, InputLabel, Snackbar, Alert, Tabs, Tab, useMediaQuery, useTheme } from '@mui/material';
+import { DragDropContext, Droppable, DropResult } from '@hello-pangea/dnd';
 import apiClient from '../../services/apiClient';
 import TaskCard, { Task as TaskType } from './TaskCard';
 import TaskForm from './TaskForm';
@@ -108,6 +109,27 @@ const TaskDashboard: React.FC = () => {
 
   return (
     <Box>
+      <DragDropContext
+        onDragStart={(start: any) => {
+          console.log('dnd:start', start);
+        }}
+        onDragEnd={async (result: DropResult) => {
+          console.log('dnd:end', result);
+          const { destination, source, draggableId } = result;
+          if (!destination) return;
+          // dropped in same place
+          if (destination.droppableId === source.droppableId && destination.index === source.index) return;
+
+          const taskId = Number(draggableId.replace('task-', ''));
+          const task = tasks.find((t) => t.id === taskId);
+          if (!task) return;
+
+          const newStatus = destination.droppableId;
+          if (task.status !== newStatus) {
+            await handleStatusChange(task, newStatus);
+          }
+        }}
+      >
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Typography variant="h5" className="accent">Task Dashboard</Typography>
         <Box>
@@ -147,38 +169,86 @@ const TaskDashboard: React.FC = () => {
           </Tabs>
 
           <Box mt={2}>
-            <Paper className="task-column fancy-card" sx={{ p: 1, minHeight: 300 }}>
-              <Typography variant="h6" sx={{ mb: 1 }} className="small-muted">
-                {columns.find((c) => c.key === activeTab)?.title}
-              </Typography>
-              {tasks
-                .filter((t) => t.status === activeTab)
-                .map((task) => (
-                  <TaskCard key={task.id} task={task} users={users} onEdit={(t) => { setEditing(t); setOpenForm(true); }} onDelete={handleDelete} onStatusChange={handleStatusChange} />
-                ))}
-            </Paper>
+            <Droppable
+              droppableId={activeTab}
+              type="TASKS"
+              renderClone={(provided: any, snapshot: any, rubric: any) => {
+                const id = Number(String(rubric.draggableId).replace('task-', ''));
+                const task = tasks.find((t) => t.id === id);
+                if (!task) return null;
+                return (
+                  <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                    <TaskCard task={task} users={users} onEdit={() => {}} onDelete={() => {}} onStatusChange={() => {}} draggableId={undefined} index={undefined} />
+                  </div>
+                );
+              }}
+            >
+              {(provided: any, snapshot: any) => (
+                <Paper
+                  className="task-column fancy-card"
+                  sx={{ p: 1, minHeight: 300, backgroundColor: snapshot.isDraggingOver ? 'rgba(25,118,210,0.06)' : undefined }}
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                >
+                  <Typography variant="h6" sx={{ mb: 1 }} className="small-muted">
+                    {columns.find((c) => c.key === activeTab)?.title}
+                  </Typography>
+                  {tasks
+                    .filter((t) => t.status === activeTab)
+                    .map((task, idx) => (
+                      <TaskCard draggableId={`task-${task.id}`} index={idx} key={task.id} task={task} users={users} onEdit={(t) => { setEditing(t); setOpenForm(true); }} onDelete={handleDelete} onStatusChange={handleStatusChange} />
+                    ))}
+                  {provided.placeholder}
+                </Paper>
+              )}
+            </Droppable>
           </Box>
         </Box>
       ) : (
         <Grid container spacing={2} className="dashboard-grid">
           {columns.map((col) => (
             <Grid item xs={12} md={4} key={col.key}>
-              <Paper className="task-column fancy-card" sx={{ p: 1, minHeight: 300 }}>
-                <Typography variant="h6" sx={{ mb: 1 }} className="small-muted">
-                  {col.title}
-                </Typography>
-                {tasks
-                  .filter((t) => t.status === col.key)
-                  .map((task) => (
-                    <TaskCard key={task.id} task={task} users={users} onEdit={(t) => { setEditing(t); setOpenForm(true); }} onDelete={handleDelete} onStatusChange={handleStatusChange} />
-                  ))}
-              </Paper>
+              <Droppable
+                droppableId={col.key}
+                type="TASKS"
+                renderClone={(provided: any, snapshot: any, rubric: any) => {
+                  const id = Number(String(rubric.draggableId).replace('task-', ''));
+                  const task = tasks.find((t) => t.id === id);
+                  if (!task) return null;
+                  return (
+                    <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                      <TaskCard task={task} users={users} onEdit={() => {}} onDelete={() => {}} onStatusChange={() => {}} draggableId={undefined} index={undefined} />
+                    </div>
+                  );
+                }}
+              >
+                {(provided: any, snapshot: any) => (
+                  <Paper
+                    className="task-column fancy-card"
+                    sx={{ p: 1, minHeight: 300, backgroundColor: snapshot.isDraggingOver ? 'rgba(25,118,210,0.06)' : undefined }}
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                  >
+                    <Typography variant="h6" sx={{ mb: 1 }} className="small-muted">
+                      {col.title}
+                    </Typography>
+                    {tasks
+                      .filter((t) => t.status === col.key)
+                      .map((task, idx) => (
+                        <TaskCard draggableId={`task-${task.id}`} index={idx} key={task.id} task={task} users={users} onEdit={(t) => { setEditing(t); setOpenForm(true); }} onDelete={handleDelete} onStatusChange={handleStatusChange} />
+                      ))}
+                    {provided.placeholder}
+                  </Paper>
+                )}
+              </Droppable>
             </Grid>
           ))}
         </Grid>
       )}
 
-      <TaskForm open={openForm} onClose={() => setOpenForm(false)} onSubmit={handleCreateOrUpdate} initial={editing || { title: '', status: 'TODO', priority: 'MEDIUM' }} users={users} />
+  </DragDropContext>
+
+  <TaskForm open={openForm} onClose={() => setOpenForm(false)} onSubmit={handleCreateOrUpdate} initial={editing || { title: '', status: 'TODO', priority: 'MEDIUM' }} users={users} />
 
       <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError(null)}>
         <Alert severity="error" onClose={() => setError(null)}>
