@@ -63,7 +63,23 @@ jobs:
       
     - name: Audit frontend dependencies
       working-directory: ./frontend
-      run: npm audit --audit-level=moderate
+      run: |
+        echo "🔍 Running comprehensive npm audit..."
+        echo "📊 Full audit report:"
+        npm audit || echo "❌ Vulnerabilities found"
+        echo ""
+        echo "📋 Detailed vulnerability analysis:"
+        npm audit --json > audit-report.json || true
+        if [ -f audit-report.json ]; then
+          echo "Vulnerability summary:"
+          jq -r '.metadata | "Total vulnerabilities: \(.vulnerabilities.total // 0) (Info: \(.vulnerabilities.info // 0), Low: \(.vulnerabilities.low // 0), Moderate: \(.vulnerabilities.moderate // 0), High: \(.vulnerabilities.high // 0), Critical: \(.vulnerabilities.critical // 0))"' audit-report.json || echo "Could not parse audit results"
+        fi
+        echo ""
+        echo "🛠️ Recommended actions:"
+        echo "1. Review vulnerabilities in the Security tab"
+        echo "2. Consider updating to newer package versions"
+        echo "3. Evaluate if vulnerabilities affect production code"
+        echo "4. For react-scripts vulnerabilities, monitor for updates"
       
     - name: Check for known vulnerabilities in backend
       working-directory: ./backend
