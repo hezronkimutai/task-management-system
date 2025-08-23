@@ -81,6 +81,10 @@ jobs:
         echo "3. Evaluate if vulnerabilities affect production code"
         echo "4. For react-scripts vulnerabilities, monitor for updates"
       
+    - name: Make Maven wrapper executable
+      working-directory: ./backend
+      run: chmod +x ./mvnw
+      
     - name: Check for known vulnerabilities in backend
       working-directory: ./backend
       run: ./mvnw org.owasp:dependency-check-maven:check
