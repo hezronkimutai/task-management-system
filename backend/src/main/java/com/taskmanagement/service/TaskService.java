@@ -5,6 +5,8 @@ import com.taskmanagement.dto.TaskUpdateRequest;
 import com.taskmanagement.entity.Task;
 import com.taskmanagement.entity.TaskStatus;
 import com.taskmanagement.entity.Priority;
+import com.taskmanagement.exception.EntityNotFoundException;
+import com.taskmanagement.exception.UnauthorizedException;
 import com.taskmanagement.repository.TaskRepository;
 import com.taskmanagement.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +37,12 @@ public class TaskService {
     public Task createTask(TaskCreateRequest taskRequest, Long creatorId) {
         // Validate that creator exists
         if (!userRepository.existsById(creatorId)) {
-            throw new RuntimeException("Creator user not found with ID: " + creatorId);
+            throw new EntityNotFoundException("Creator user not found with ID: " + creatorId);
         }
 
         // Validate assignee if provided
         if (taskRequest.getAssigneeId() != null && !userRepository.existsById(taskRequest.getAssigneeId())) {
-            throw new RuntimeException("Assignee user not found with ID: " + taskRequest.getAssigneeId());
+            throw new EntityNotFoundException("Assignee user not found with ID: " + taskRequest.getAssigneeId());
         }
 
         Task task = new Task(
@@ -62,21 +64,22 @@ public class TaskService {
      * @param taskRequest the task update request
      * @param userId the ID of the user updating the task
      * @return the updated task
-     * @throws RuntimeException if task not found or user not authorized
+     * @throws EntityNotFoundException if task not found
+     * @throws UnauthorizedException if user not authorized
      */
     public Task updateTask(Long taskId, TaskUpdateRequest taskRequest, Long userId) {
         Task existingTask = taskRepository.findById(taskId)
-                .orElseThrow(() -> new RuntimeException("Task not found with ID: " + taskId));
+                .orElseThrow(() -> new EntityNotFoundException("Task not found with ID: " + taskId));
 
         // Check authorization: only creator or assignee can update
         if (!existingTask.getCreatorId().equals(userId) && 
             (existingTask.getAssigneeId() == null || !existingTask.getAssigneeId().equals(userId))) {
-            throw new RuntimeException("Not authorized to update this task");
+            throw new UnauthorizedException("Not authorized to update this task");
         }
 
         // Validate assignee if provided
         if (taskRequest.getAssigneeId() != null && !userRepository.existsById(taskRequest.getAssigneeId())) {
-            throw new RuntimeException("Assignee user not found with ID: " + taskRequest.getAssigneeId());
+            throw new EntityNotFoundException("Assignee user not found with ID: " + taskRequest.getAssigneeId());
         }
 
         // Update task fields
@@ -163,15 +166,16 @@ public class TaskService {
      *
      * @param taskId the ID of the task to delete
      * @param userId the ID of the user deleting the task
-     * @throws RuntimeException if task not found or user not authorized
+     * @throws EntityNotFoundException if task not found
+     * @throws UnauthorizedException if user not authorized
      */
     public void deleteTask(Long taskId, Long userId) {
         Task existingTask = taskRepository.findById(taskId)
-                .orElseThrow(() -> new RuntimeException("Task not found with ID: " + taskId));
+                .orElseThrow(() -> new EntityNotFoundException("Task not found with ID: " + taskId));
 
         // Check authorization: only creator can delete
         if (!existingTask.getCreatorId().equals(userId)) {
-            throw new RuntimeException("Not authorized to delete this task");
+            throw new UnauthorizedException("Not authorized to delete this task");
         }
 
         taskRepository.deleteById(taskId);

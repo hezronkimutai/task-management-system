@@ -4,6 +4,8 @@ import com.taskmanagement.dto.TaskCreateRequest;
 import com.taskmanagement.dto.TaskResponse;
 import com.taskmanagement.dto.TaskUpdateRequest;
 import com.taskmanagement.entity.Task;
+import com.taskmanagement.exception.EntityNotFoundException;
+import com.taskmanagement.exception.UnauthorizedException;
 import com.taskmanagement.service.TaskService;
 import com.taskmanagement.service.UserDetailsServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,7 +50,7 @@ public class TaskController {
             UserDetailsServiceImpl.UserPrincipal userPrincipal = (UserDetailsServiceImpl.UserPrincipal) authentication.getPrincipal();
             return userPrincipal.getId();
         }
-        throw new RuntimeException("User not authenticated");
+        throw new UnauthorizedException("User not authenticated");
     }
 
     /**
@@ -136,7 +138,7 @@ public class TaskController {
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<TaskResponse> getTaskById(@Parameter(description = "Task ID") @PathVariable Long id) {
         Task task = taskService.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found with ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Task not found with ID: " + id));
         return ResponseEntity.ok(new TaskResponse(task));
     }
 

@@ -4,6 +4,9 @@ import com.taskmanagement.dto.AuthResponse;
 import com.taskmanagement.dto.LoginRequest;
 import com.taskmanagement.dto.RegisterRequest;
 import com.taskmanagement.entity.User;
+import com.taskmanagement.exception.ConflictException;
+import com.taskmanagement.exception.EntityNotFoundException;
+import com.taskmanagement.exception.UnauthorizedException;
 import com.taskmanagement.service.UserService;
 import com.taskmanagement.util.JwtUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -90,7 +93,7 @@ public class AuthController {
         // Check if username or email already exists
         if (userService.existsByUsername(registerRequest.getUsername()) ||
             userService.existsByEmail(registerRequest.getEmail())) {
-            throw new RuntimeException("Registration failed: username or email already in use.");
+            throw new ConflictException("Registration failed: username or email already in use.");
         }
         // Create new user
         User user = userService.createUser(
@@ -182,7 +185,7 @@ public class AuthController {
 
             // Get user details
             User user = userService.findByUsername(loginRequest.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
             // Create response
             AuthResponse authResponse = new AuthResponse(
@@ -195,7 +198,7 @@ public class AuthController {
 
             return ResponseEntity.ok(authResponse);
         } catch (AuthenticationException e) {
-            throw new RuntimeException("Invalid username or password");
+            throw new UnauthorizedException("Invalid username or password");
         }
     }
 }
