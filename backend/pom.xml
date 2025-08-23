@@ -97,6 +97,34 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.2.5</version>
+				<configuration>
+					<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+					<includes>
+						<include>**/*Test.java</include>
+						<include>**/*Tests.java</include>
+					</includes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.owasp</groupId>
+				<artifactId>dependency-check-maven</artifactId>
+				<version>10.0.4</version>
+				<configuration>
+					<format>ALL</format>
+					<outputDirectory>${project.build.directory}/dependency-check</outputDirectory>
+					<suppressionFile>owasp-suppressions.xml</suppressionFile>
+					<failBuildOnCVSS>7</failBuildOnCVSS>
+					<skipTestScope>true</skipTestScope>
+					<!-- Enable faster updates with API key if available -->
+					<nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
+					<nvdMaxRetryCount>10</nvdMaxRetryCount>
+					<nvdApiDelay>4000</nvdApiDelay>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 

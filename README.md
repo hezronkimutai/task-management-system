@@ -2,6 +2,10 @@
 
 A full-stack task management application built with Spring Boot (backend) and React with TypeScript (frontend).
 
+## Build Status
+
+![CI Status](https://github.com/hezronkimutai/task-management-system/workflows/Continuous%20Integration/badge.svg)
+
 ## Technology Stack & Versions
 
 ### Backend
@@ -240,6 +244,24 @@ The backend configuration can be found in `backend/src/main/resources/applicatio
 ### Frontend Configuration
 The frontend is configured to connect to the backend at `http://localhost:8080`. This can be modified in the frontend source code if needed.
 
+## Security
+
+### Security Features
+- **Authentication**: JWT-based secure authentication
+- **CORS Protection**: Configured Cross-Origin Resource Sharing
+- **Input Validation**: Server-side request validation
+- **Error Handling**: Secure error responses without information leakage
+- **Password Security**: Secure password hashing with BCrypt
+- **Token Security**: JWT tokens with proper expiration and validation
+
+### Best Practices
+- Regular dependency updates
+- Secure configuration management
+- Environment-specific settings
+- Proper error handling without information disclosure
+
+For security concerns, please follow responsible disclosure practices when reporting vulnerabilities.
+
 ## Troubleshooting
 
 ### Common Issues:
@@ -300,18 +322,77 @@ The frontend is configured to connect to the backend at `http://localhost:8080`.
 - Better type safety with modern TypeScript
 - Clean dependency resolution without legacy workarounds
 
+## CI/CD and Quality Assurance
+
+This project uses **GitHub Actions** for continuous integration and automated testing. All pull requests must pass automated tests before being merged.
+
+### Automated Testing Pipeline
+
+![CI Status](https://github.com/hezronkimutai/task-management-system/workflows/Continuous%20Integration/badge.svg)
+
+**✅ What gets tested automatically:**
+- **Backend Tests**: JUnit 5 tests with Spring Boot Test (`./mvnw test`)
+- **Frontend Tests**: Jest tests with React Testing Library (`npm test`)
+- **Build Verification**: Both frontend and backend compilation
+- **Code Quality**: Automated test reporting and coverage
+
+**🚫 Pull Request Requirements:**
+- All tests must pass ✅
+- Code builds successfully ✅
+- At least one approving review ✅ (when branch protection is enabled)
+
+### Running Tests Locally
+
+Before submitting a pull request, ensure all tests pass locally:
+
+```bash
+# Backend tests
+cd backend
+./mvnw test
+
+# Frontend tests  
+cd frontend
+npm test
+
+# Frontend tests with coverage
+npm test -- --coverage --watchAll=false
+
+# Build verification
+cd backend && ./mvnw clean compile
+cd frontend && npm run build
+```
+
+### Branch Protection
+
+The `main` branch is protected with the following rules:
+- ✅ Require status checks to pass before merging
+- ✅ Require pull request reviews before merging  
+- ✅ Require branches to be up to date before merging
+- ✅ Include administrators in restrictions
+
+### Workflows
+
+1. **Continuous Integration** (`.github/workflows/ci.yml`)
+   - Runs on every pull request and push to `main`/`develop`
+   - Parallel execution of backend and frontend tests
+   - Integration verification and build checks
+   - Automated test reporting and status updates
+
+For detailed contributing guidelines, see [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Test both backend and frontend
+4. **Ensure all tests pass locally** (see CI/CD section above)
 5. Submit a pull request
 
 **Development Requirements:**
 - Java 24+ for backend development
 - Node.js 24.6.0+ for frontend development
 - Follow the version requirements specified above
+- All automated tests must pass before merge
 
 ## License
 
