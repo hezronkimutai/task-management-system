@@ -162,6 +162,28 @@ public class TaskService {
     }
 
     /**
+     * Get tasks filtered by optional status and optional assignee.
+     * If assigneeId is null and includeUnassigned is true, unassigned tasks are returned.
+     * If assigneeId provided, tasks for that assignee are returned (optionally filtered by status).
+     * If status provided but assigneeId not provided, returns tasks by status.
+     */
+    public List<Task> getTasksFiltered(TaskStatus status, Long assigneeId, boolean unassignedOnly) {
+        if (assigneeId != null) {
+            if (status != null) return taskRepository.findByAssigneeIdAndStatus(assigneeId, status);
+            return taskRepository.findByAssigneeId(assigneeId);
+        }
+
+        if (unassignedOnly) {
+            if (status != null) return taskRepository.findByStatusAndAssigneeIdIsNull(status);
+            return taskRepository.findByAssigneeIdIsNull();
+        }
+
+        if (status != null) return taskRepository.findByStatus(status);
+
+        return taskRepository.findAll();
+    }
+
+    /**
      * Delete a task.
      *
      * @param taskId the ID of the task to delete

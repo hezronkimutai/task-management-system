@@ -65,6 +65,19 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
      * @return List of tasks matching the criteria
      */
     List<Task> findByAssigneeIdAndStatus(Long assigneeId, TaskStatus status);
+
+    /**
+     * Find tasks where assignee is null (unassigned)
+     * @return list of unassigned tasks
+     */
+    List<Task> findByAssigneeIdIsNull();
+
+    /**
+     * Find tasks by status where assignee is null
+     * @param status the status
+     * @return list of tasks with the status and no assignee
+     */
+    List<Task> findByStatusAndAssigneeIdIsNull(TaskStatus status);
     
     /**
      * Find tasks where user is either creator or assignee.

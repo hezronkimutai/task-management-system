@@ -16,8 +16,8 @@ const LoginForm: React.FC = () => {
     setError(null);
     setLoading(true);
     try {
-      await authService.login(data);
-      navigate('/');
+  await authService.login(data);
+  navigate('/tasks');
     } catch (err: any) {
       setError(err?.response?.data?.message || err?.message || 'Login failed');
     } finally {
