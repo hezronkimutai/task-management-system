@@ -34,6 +34,20 @@ public class TestController {
     private AuthenticationManager authenticationManager;
 
     /**
+     * Simple test endpoint to verify API connectivity for frontend
+     */
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> testConnection() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "success");
+        response.put("message", "Backend API is running");
+        response.put("timestamp", System.currentTimeMillis());
+        response.put("environment", System.getProperty("spring.profiles.active", "default"));
+        
+        return ResponseEntity.ok(response);
+    }
+
+    /**
      * Public endpoint to test basic connectivity.
      *
      * @return success message
