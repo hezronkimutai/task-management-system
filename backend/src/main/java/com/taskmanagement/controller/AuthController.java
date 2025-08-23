@@ -125,6 +125,37 @@ public class AuthController {
     }
 
     /**
+     * Get current authenticated user details.
+     */
+    @Operation(summary = "Get current user", description = "Return currently authenticated user's details")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Current user retrieved"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
+    @GetMapping("/me")
+    public ResponseEntity<?> me() {
+        // Obtain username from security context
+        Authentication authentication = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        String username = String.valueOf(authentication.getPrincipal());
+        // principal may be a UserDetails; try to resolve
+        try {
+            // If principal implements UserDetails, get username
+            if (authentication.getPrincipal() instanceof org.springframework.security.core.userdetails.UserDetails) {
+                username = ((org.springframework.security.core.userdetails.UserDetails) authentication.getPrincipal()).getUsername();
+            }
+        } catch (Exception ignored) {
+        }
+
+        User user = userService.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        AuthResponse authResponse = new AuthResponse(null, user.getId(), user.getUsername(), user.getEmail(), user.getRole().name());
+        return ResponseEntity.ok(authResponse);
+    }
+
+    /**
      * Authenticate user login.
      *
      * @param loginRequest the login request
