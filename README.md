@@ -89,6 +89,27 @@ Frontend runs on **http://localhost:3000**
 
 The backend server will start on **http://localhost:8080**
 
+### Seed demo data (development)
+
+This project includes a data seeder to populate sample users and tasks for demo/development.
+
+**Profiles:**
+- The seeder now runs for all Spring profiles: `default`, `dev`, or `local`.
+- You do not need to set a profile to get demo data; it will seed automatically unless users already exist.
+- To force a specific profile, use one of:
+  - `./mvnw spring-boot:run -Dspring-boot.run.profiles=dev`
+  - `./mvnw spring-boot:run -Dspring-boot.run.profiles=local`
+  - `./mvnw spring-boot:run` (default profile)
+
+**Credentials created by the seeder:**
+- Admin: username `admin` (email: admin@example.com) / password `password123`
+- User:  username `user`  (email: user@example.com) / password `password123`
+
+**Notes:**
+- Seeder will not overwrite existing data; it skips seeding if users already exist.
+- Passwords are stored encoded using BCrypt.
+
+
 ### Backend Features:
 - Spring Boot 3.4.1 with Java 24
 - REST API endpoints
