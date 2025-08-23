@@ -1,7 +1,8 @@
 import React from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { TextField, Button, Box, CircularProgress, Alert } from '@mui/material';
-import authService, { RegisterRequest } from '../../services/authService';
+import { RegisterRequest } from '../../services/authService';
+import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 type FormValues = RegisterRequest;
@@ -15,11 +16,13 @@ const RegisterForm: React.FC = () => {
   const password = React.useRef({});
   password.current = watch('password', '');
 
+  const { register: registerUser } = useAuth();
+
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setError(null);
     setLoading(true);
     try {
-      await authService.register(data);
+      await registerUser(data);
       navigate('/');
     } catch (err: any) {
       setError(err?.response?.data?.message || err?.message || 'Registration failed');
