@@ -80,18 +80,21 @@ public class SecurityConfig {
         http.cors(cors -> {})
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
+            .authorizeHttpRequests(auth -> {
                 // Public endpoints
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/h2-console/**").permitAll()
-                .requestMatchers("/api/test/public").permitAll()
+                auth.requestMatchers("/api/auth/**").permitAll();
+                auth.requestMatchers("/h2-console/**").permitAll();
+                // Only allow test endpoint in dev profile
+                if (environment.acceptsProfiles("dev")) {
+                    auth.requestMatchers("/api/test/public").permitAll();
+                }
                 // Admin endpoints
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                auth.requestMatchers("/api/admin/**").hasRole("ADMIN");
                 // User endpoints
-                .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
+                auth.requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN");
                 // All other endpoints require authentication
-                .anyRequest().authenticated()
-            )
+                auth.anyRequest().authenticated();
+            })
             .headers(headers -> headers
                 .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
             )
