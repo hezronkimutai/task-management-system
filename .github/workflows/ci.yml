@@ -28,6 +28,10 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
         
+    - name: Make mvnw executable
+      working-directory: ./backend
+      run: chmod +x ./mvnw
+      
     - name: Run backend tests
       working-directory: ./backend
       run: ./mvnw test
@@ -108,6 +112,10 @@ jobs:
     - name: Build frontend
       working-directory: ./frontend
       run: npm run build
+      
+    - name: Make mvnw executable
+      working-directory: ./backend
+      run: chmod +x ./mvnw
       
     - name: Build backend
       working-directory: ./backend
