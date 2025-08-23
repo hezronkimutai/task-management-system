@@ -27,7 +27,13 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:install": "npx playwright install",
     "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
   },
   "jest": {
     "transformIgnorePatterns": [
