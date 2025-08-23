@@ -34,13 +34,13 @@ Our CI/CD pipeline runs the following tests automatically on every pull request:
 - **Dependency compatibility** checks
 - **Cross-service integration** validation
 
-### Security Scanning
+### Code Quality
 
-We run automated security scans to identify vulnerabilities:
+We maintain code quality through:
 
-- **Trivy**: File system and dependency vulnerability scanning
-- **npm audit**: Frontend dependency security audit
-- **OWASP Dependency Check**: Backend dependency vulnerability analysis
+- **Automated testing**: Comprehensive test coverage for both frontend and backend
+- **Type safety**: TypeScript for frontend development
+- **Build verification**: Ensuring code compiles successfully
 
 ## Running Tests Locally
 
@@ -83,12 +83,6 @@ npm run build
   - `backend-tests`: Runs Spring Boot tests with Maven
   - `frontend-tests`: Runs React tests with npm
   - `integration-check`: Verifies builds and summarizes results
-
-### Security Workflow (`.github/workflows/security.yml`)
-- **Triggers**: Pull requests and pushes to `main` and `develop` branches
-- **Jobs**:
-  - `security-scan`: Trivy vulnerability scanner
-  - `dependency-check`: Frontend and backend dependency audits
 
 ## Branch Protection Rules
 

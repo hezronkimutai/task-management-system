@@ -5,7 +5,6 @@ A full-stack task management application built with Spring Boot (backend) and Re
 ## Build Status
 
 ![CI Status](https://github.com/hezronkimutai/task-management-system/workflows/Continuous%20Integration/badge.svg)
-![Security](https://github.com/hezronkimutai/task-management-system/workflows/Security%20and%20Code%20Quality/badge.svg)
 
 ## Technology Stack & Versions
 
@@ -247,32 +246,21 @@ The frontend is configured to connect to the backend at `http://localhost:8080`.
 
 ## Security
 
-### Vulnerability Management
-This project implements comprehensive security scanning and vulnerability management:
-
-- ✅ **Zero npm audit vulnerabilities** - All frontend dependencies are secure
-- ✅ **Automated security scanning** - CI/CD pipeline includes security checks
-- ✅ **Dependency monitoring** - Regular vulnerability scanning and updates
-- ✅ **Package overrides** - Strategic dependency version management
-
 ### Security Features
 - **Authentication**: JWT-based secure authentication
 - **CORS Protection**: Configured Cross-Origin Resource Sharing
 - **Input Validation**: Server-side request validation
 - **Error Handling**: Secure error responses without information leakage
+- **Password Security**: Secure password hashing with BCrypt
+- **Token Security**: JWT tokens with proper expiration and validation
 
-### Security Monitoring
-The project includes automated security monitoring through:
-- Daily npm audit scans
-- Weekly comprehensive security reports
-- Pull request dependency reviews
-- CodeQL analysis for code security
+### Best Practices
+- Regular dependency updates
+- Secure configuration management
+- Environment-specific settings
+- Proper error handling without information disclosure
 
-### Security Documentation
-- [Security Assessment](docs/SECURITY_ASSESSMENT.md) - Comprehensive security strategy
-- [Security Resolution Report](docs/SECURITY_RESOLUTION_REPORT.md) - Vulnerability resolution details
-
-For security concerns, please follow the responsible disclosure process outlined in our security documentation.
+For security concerns, please follow responsible disclosure practices when reporting vulnerabilities.
 
 ## Troubleshooting
 
@@ -341,18 +329,15 @@ This project uses **GitHub Actions** for continuous integration and automated te
 ### Automated Testing Pipeline
 
 ![CI Status](https://github.com/hezronkimutai/task-management-system/workflows/Continuous%20Integration/badge.svg)
-![Security](https://github.com/hezronkimutai/task-management-system/workflows/Security%20and%20Code%20Quality/badge.svg)
 
 **✅ What gets tested automatically:**
 - **Backend Tests**: JUnit 5 tests with Spring Boot Test (`./mvnw test`)
 - **Frontend Tests**: Jest tests with React Testing Library (`npm test`)
 - **Build Verification**: Both frontend and backend compilation
-- **Security Scanning**: Dependency vulnerabilities with Trivy and OWASP
-- **Code Quality**: Automated dependency audits
+- **Code Quality**: Automated test reporting and coverage
 
 **🚫 Pull Request Requirements:**
 - All tests must pass ✅
-- Security scans must pass ✅
 - Code builds successfully ✅
 - At least one approving review ✅ (when branch protection is enabled)
 
@@ -391,11 +376,7 @@ The `main` branch is protected with the following rules:
    - Runs on every pull request and push to `main`/`develop`
    - Parallel execution of backend and frontend tests
    - Integration verification and build checks
-
-2. **Security and Code Quality** (`.github/workflows/security.yml`)
-   - Vulnerability scanning with Trivy
-   - Dependency audits for both npm and Maven
-   - Results uploaded to GitHub Security tab
+   - Automated test reporting and status updates
 
 For detailed contributing guidelines, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
