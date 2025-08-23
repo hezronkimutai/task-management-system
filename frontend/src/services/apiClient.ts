@@ -1,6 +1,5 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 import config from '../config/config';
-import authService from './authService';
 
 /**
  * API client configuration and setup

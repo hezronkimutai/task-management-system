@@ -8,7 +8,7 @@ import { useAuth } from '../../contexts/AuthContext';
 type User = { id: number; username: string };
 
 const TaskDashboard: React.FC = () => {
-  const { user } = useAuth();
+  useAuth();
   const [tasks, setTasks] = React.useState<TaskType[]>([]);
   const [users, setUsers] = React.useState<User[]>([]);
   const [filterStatus, setFilterStatus] = React.useState<string>('ALL');
