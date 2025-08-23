@@ -207,6 +207,48 @@ cd frontend
 npm test
 ```
 
+### End-to-end tests (Playwright)
+
+This project includes Playwright E2E tests located in `frontend/e2e` that exercise the full application (frontend + backend).
+
+Prerequisites:
+- Java backend running on http://localhost:8080 (see "Backend Setup and Run" above). The Playwright tests interact with the backend API for user registration/login.
+- Node.js (v18+) and npm installed.
+
+Quick steps (recommended):
+
+1. Start the backend (in a terminal):
+```bash
+cd backend
+./mvnw spring-boot:run
+# On Windows CMD/PowerShell you can run: mvnw.cmd spring-boot:run
+```
+
+2. Install frontend dependencies and Playwright browsers:
+```bash
+cd frontend
+npm install
+npm run test:e2e:install    # runs `npx playwright install` to download browsers
+```
+
+3. Run the Playwright tests:
+```bash
+# Headless (CI-friendly)
+npm run test:e2e
+
+# Headed (see the browser)
+npm run test:e2e:headed
+```
+
+4. View the HTML report:
+- Playwright writes an HTML report by default to `frontend/playwright-report/index.html`. Open that file in a browser after a run to inspect results.
+
+Notes and tips:
+- The Playwright config (`frontend/playwright.config.ts`) is set to start the frontend dev server automatically (`npm start`) when running tests. However, the backend must be started separately because the tests call the backend API (http://localhost:8080) to register or authenticate test users.
+- If you prefer the tests to reuse an already-running frontend server set `CI=true` or ensure the dev server is running and the `webServer.reuseExistingServer` behaviour will pick it up.
+- To install Playwright globally for manual runs you can run `npx playwright install` from the `frontend` folder.
+
+
 **Build Verification:**
 ```bash
 # Backend
