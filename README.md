@@ -245,6 +245,35 @@ The backend configuration can be found in `backend/src/main/resources/applicatio
 ### Frontend Configuration
 The frontend is configured to connect to the backend at `http://localhost:8080`. This can be modified in the frontend source code if needed.
 
+## Security
+
+### Vulnerability Management
+This project implements comprehensive security scanning and vulnerability management:
+
+- ✅ **Zero npm audit vulnerabilities** - All frontend dependencies are secure
+- ✅ **Automated security scanning** - CI/CD pipeline includes security checks
+- ✅ **Dependency monitoring** - Regular vulnerability scanning and updates
+- ✅ **Package overrides** - Strategic dependency version management
+
+### Security Features
+- **Authentication**: JWT-based secure authentication
+- **CORS Protection**: Configured Cross-Origin Resource Sharing
+- **Input Validation**: Server-side request validation
+- **Error Handling**: Secure error responses without information leakage
+
+### Security Monitoring
+The project includes automated security monitoring through:
+- Daily npm audit scans
+- Weekly comprehensive security reports
+- Pull request dependency reviews
+- CodeQL analysis for code security
+
+### Security Documentation
+- [Security Assessment](docs/SECURITY_ASSESSMENT.md) - Comprehensive security strategy
+- [Security Resolution Report](docs/SECURITY_RESOLUTION_REPORT.md) - Vulnerability resolution details
+
+For security concerns, please follow the responsible disclosure process outlined in our security documentation.
+
 ## Troubleshooting
 
 ### Common Issues:
