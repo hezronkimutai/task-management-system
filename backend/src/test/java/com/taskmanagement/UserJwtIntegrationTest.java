@@ -63,13 +63,7 @@ class UserJwtIntegrationTest {
         assertEquals(username, jwtUtils.getUsernameFromJwtToken(jwt));
         assertFalse(jwtUtils.isTokenExpired(jwt));
 
-        System.out.println("✅ User created successfully:");
-        System.out.println("   ID: " + user.getId());
-        System.out.println("   Username: " + user.getUsername());
-        System.out.println("   Email: " + user.getEmail());
-        System.out.println("   Role: " + user.getRole());
-        System.out.println("   Created At: " + user.getCreatedAt());
-        System.out.println("✅ JWT generated successfully: " + jwt.substring(0, 20) + "...");
+    // Test output intentionally suppressed to keep test logs clean
     }
 
     @Test
@@ -99,13 +93,7 @@ class UserJwtIntegrationTest {
         assertNotNull(jwt);
         assertTrue(jwtUtils.validateJwtToken(jwt));
 
-        System.out.println("✅ Admin user created successfully:");
-        System.out.println("   ID: " + admin.getId());
-        System.out.println("   Username: " + admin.getUsername());
-        System.out.println("   Email: " + admin.getEmail());
-        System.out.println("   Role: " + admin.getRole());
-        System.out.println("   Created At: " + admin.getCreatedAt());
-        System.out.println("✅ Admin JWT generated successfully: " + jwt.substring(0, 20) + "...");
+    // Test output intentionally suppressed to keep test logs clean
     }
 
     @Test
@@ -117,7 +105,7 @@ class UserJwtIntegrationTest {
         assertFalse(userService.existsByUsername(username));
         assertFalse(userService.existsByEmail(email));
 
-        User user = userService.createUser(username, email, "password123");
+    userService.createUser(username, email, "password123");
 
         assertTrue(userService.existsByUsername(username));
         assertTrue(userService.existsByEmail(email));
@@ -125,6 +113,6 @@ class UserJwtIntegrationTest {
         assertTrue(userService.findByUsername(username).isPresent());
         assertTrue(userService.findByEmail(email).isPresent());
 
-        System.out.println("✅ Repository methods working correctly");
+    // Test output intentionally suppressed to keep test logs clean
     }
 }

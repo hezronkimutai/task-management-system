@@ -53,15 +53,11 @@ class AuthService {
       // Store token in localStorage
       localStorage.setItem(config.auth.tokenKey, response.token);
       
-      if (config.features.enableDebug) {
-        console.log('Login successful:', response.user);
-      }
+  // debug logging removed
       
       return response;
     } catch (error) {
-      if (config.features.enableDebug) {
-        console.error('Login error:', error);
-      }
+      // error handling intentionally suppressed from console to reduce noise
       throw error;
     }
   }
@@ -76,15 +72,11 @@ class AuthService {
       // Store token in localStorage
       localStorage.setItem(config.auth.tokenKey, response.token);
       
-      if (config.features.enableDebug) {
-        console.log('Registration successful:', response.user);
-      }
+  // debug logging removed
       
       return response;
     } catch (error) {
-      if (config.features.enableDebug) {
-        console.error('Registration error:', error);
-      }
+      // error handling intentionally suppressed from console to reduce noise
       throw error;
     }
   }
@@ -95,9 +87,7 @@ class AuthService {
   logout(): void {
     localStorage.removeItem(config.auth.tokenKey);
     
-    if (config.features.enableDebug) {
-      console.log('User logged out');
-    }
+  // debug logging removed
   }
 
   /**
@@ -108,9 +98,7 @@ class AuthService {
   const response = await api.get<User>('/api/auth/me').then(r => r.data);
   return response;
     } catch (error) {
-      if (config.features.enableDebug) {
-        console.error('Get current user error:', error);
-      }
+  // debug logging removed
       throw error;
     }
   }
@@ -152,9 +140,7 @@ class AuthService {
   localStorage.setItem(config.auth.tokenKey, response.token);
   return response.token;
     } catch (error) {
-      if (config.features.enableDebug) {
-        console.error('Token refresh error:', error);
-      }
+  // debug logging removed
       this.logout();
       return null;
     }

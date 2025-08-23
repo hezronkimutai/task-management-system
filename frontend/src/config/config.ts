@@ -108,9 +108,7 @@ function validateConfig(): void {
     console.error('Invalid API base URL:', config.api.baseUrl);
   }
 
-  if (config.features.enableDebug) {
-    console.log('Application configuration:', config);
-  }
+  // debug logging removed
 }
 
 // Validate configuration on module load

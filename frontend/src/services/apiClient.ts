@@ -32,16 +32,12 @@ class ApiClient {
           requestConfig.headers.Authorization = `Bearer ${token}`;
         }
 
-        if (config.features.enableDebug) {
-          console.log('API Request:', requestConfig);
-        }
+  // debug logging removed
 
         return requestConfig;
       },
       (error) => {
-        if (config.features.enableDebug) {
-          console.error('Request Error:', error);
-        }
+  // debug logging removed
         return Promise.reject(error);
       }
     );
@@ -49,15 +45,11 @@ class ApiClient {
     // Response interceptor - handle common errors
     this.client.interceptors.response.use(
       (response: AxiosResponse) => {
-        if (config.features.enableDebug) {
-          console.log('API Response:', response);
-        }
+  // debug logging removed
         return response;
       },
       (error) => {
-        if (config.features.enableDebug) {
-          console.error('Response Error:', error);
-        }
+  // debug logging removed
 
         // Handle 401 Unauthorized - token expired
         if (error.response?.status === 401) {

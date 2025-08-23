@@ -28,7 +28,7 @@ api.interceptors.request.use(
       configReq.headers = configReq.headers || {};
       configReq.headers.Authorization = `Bearer ${token}`;
     }
-    if (config.features.enableDebug) console.log('API Request:', configReq);
+  // debug logging removed
     return configReq;
   },
   (error) => Promise.reject(error)
@@ -36,13 +36,13 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (resp) => {
-    if (config.features.enableDebug) console.log('API Response:', resp);
+  // debug logging removed
     return resp;
   },
   async (error) => {
     const originalRequest = error.config;
 
-    if (config.features.enableDebug) console.error('API Response Error:', error);
+  // debug logging removed
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       // Attempt refresh once
