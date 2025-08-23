@@ -1,4 +1,4 @@
-package main.java.com.taskmanagement.config;
+package com.taskmanagement.config;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;

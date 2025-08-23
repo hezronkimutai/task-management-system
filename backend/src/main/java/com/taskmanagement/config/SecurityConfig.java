@@ -5,6 +5,8 @@ import com.taskmanagement.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -32,6 +34,9 @@ public class SecurityConfig {
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Autowired
+    private Environment environment;
 
     /**
      * Password encoder bean.
@@ -85,7 +90,7 @@ public class SecurityConfig {
                 auth.requestMatchers("/api/auth/**").permitAll();
                 auth.requestMatchers("/h2-console/**").permitAll();
                 // Only allow test endpoint in dev profile
-                if (environment.acceptsProfiles("dev")) {
+                if (environment.acceptsProfiles(Profiles.of("dev"))) {
                     auth.requestMatchers("/api/test/public").permitAll();
                 }
                 // Admin endpoints
