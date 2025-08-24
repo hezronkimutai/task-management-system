@@ -22,6 +22,8 @@ public class ScheduledNotificationService {
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
+    @Autowired
+    private com.taskmanagement.service.NotificationService notificationService;
 
     // Run every minute to find tasks due within the next hour or already overdue
     @Scheduled(fixedRate = 60_000)
@@ -39,16 +41,20 @@ public class ScheduledNotificationService {
                     NotificationEvent ev = new NotificationEvent("OVERDUE", t.getId(), t.getTitle(), t.getAssigneeId(), due);
                     if (t.getAssigneeId() != null) {
                         try { messagingTemplate.convertAndSendToUser(String.valueOf(t.getAssigneeId()), "/queue/notifications", ev); } catch (Exception ignored) {}
+                        notificationService.save(new com.taskmanagement.entity.Notification(ev.getType(), ev.getTaskId(), ev.getTitle(), ev.getAssigneeId(), ev.getAssigneeId(), ev.getDueDate()));
                     } else {
                         try { messagingTemplate.convertAndSend("/topic/notifications", ev); } catch (Exception ignored) {}
+                        notificationService.save(new com.taskmanagement.entity.Notification(ev.getType(), ev.getTaskId(), ev.getTitle(), ev.getAssigneeId(), null, ev.getDueDate()));
                     }
                 } else if (!due.isAfter(inOneHour)) {
                     // due within next hour
                     NotificationEvent ev = new NotificationEvent("DUE_SOON", t.getId(), t.getTitle(), t.getAssigneeId(), due);
                     if (t.getAssigneeId() != null) {
                         try { messagingTemplate.convertAndSendToUser(String.valueOf(t.getAssigneeId()), "/queue/notifications", ev); } catch (Exception ignored) {}
+                        notificationService.save(new com.taskmanagement.entity.Notification(ev.getType(), ev.getTaskId(), ev.getTitle(), ev.getAssigneeId(), ev.getAssigneeId(), ev.getDueDate()));
                     } else {
                         try { messagingTemplate.convertAndSend("/topic/notifications", ev); } catch (Exception ignored) {}
+                        notificationService.save(new com.taskmanagement.entity.Notification(ev.getType(), ev.getTaskId(), ev.getTitle(), ev.getAssigneeId(), null, ev.getDueDate()));
                     }
                 }
             } catch (Exception ignored) {}

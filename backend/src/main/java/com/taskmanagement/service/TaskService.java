@@ -33,6 +33,8 @@ public class TaskService {
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
+    @Autowired
+    private com.taskmanagement.service.NotificationService notificationService;
 
     /**
      * Create a new task.
@@ -72,8 +74,12 @@ public class TaskService {
             NotificationEvent ev = new NotificationEvent("CREATED", saved.getId(), saved.getTitle(), saved.getAssigneeId(), saved.getDueDate());
             if (saved.getAssigneeId() != null) {
                 messagingTemplate.convertAndSendToUser(String.valueOf(saved.getAssigneeId()), "/queue/notifications", ev);
+                // persist notification for recipient
+                notificationService.save(new com.taskmanagement.entity.Notification(ev.getType(), ev.getTaskId(), ev.getTitle(), ev.getAssigneeId(), ev.getAssigneeId(), ev.getDueDate()));
             } else {
                 messagingTemplate.convertAndSend("/topic/notifications", ev);
+                // persist broadcast as recipientId null (optional)
+                notificationService.save(new com.taskmanagement.entity.Notification(ev.getType(), ev.getTaskId(), ev.getTitle(), ev.getAssigneeId(), null, ev.getDueDate()));
             }
         } catch (Exception ignored) {}
         return saved;
@@ -127,8 +133,10 @@ public class TaskService {
             }
             if (updated.getAssigneeId() != null) {
                 messagingTemplate.convertAndSendToUser(String.valueOf(updated.getAssigneeId()), "/queue/notifications", ev);
+                notificationService.save(new com.taskmanagement.entity.Notification(ev.getType(), ev.getTaskId(), ev.getTitle(), ev.getAssigneeId(), ev.getAssigneeId(), ev.getDueDate()));
             } else {
                 messagingTemplate.convertAndSend("/topic/notifications", ev);
+                notificationService.save(new com.taskmanagement.entity.Notification(ev.getType(), ev.getTaskId(), ev.getTitle(), ev.getAssigneeId(), null, ev.getDueDate()));
             }
         } catch (Exception ignored) {}
         return updated;
@@ -250,8 +258,10 @@ public class TaskService {
             NotificationEvent ev = new NotificationEvent("DELETED", softDeleted.getId(), softDeleted.getTitle(), softDeleted.getAssigneeId(), softDeleted.getDueDate());
             if (softDeleted.getAssigneeId() != null) {
                 messagingTemplate.convertAndSendToUser(String.valueOf(softDeleted.getAssigneeId()), "/queue/notifications", ev);
+                notificationService.save(new com.taskmanagement.entity.Notification(ev.getType(), ev.getTaskId(), ev.getTitle(), ev.getAssigneeId(), ev.getAssigneeId(), ev.getDueDate()));
             } else {
                 messagingTemplate.convertAndSend("/topic/notifications", ev);
+                notificationService.save(new com.taskmanagement.entity.Notification(ev.getType(), ev.getTaskId(), ev.getTitle(), ev.getAssigneeId(), null, ev.getDueDate()));
             }
         } catch (Exception ignored) {}
     }

@@ -44,6 +44,24 @@ const TaskDashboard: React.FC = () => {
     }
   };
 
+  const loadNotifications = async () => {
+    try {
+      const data = await apiClient.get<any[]>('/api/notifications');
+      // backend returns persisted notifications (recipientId may be null for broadcasts)
+      const mapped = (data || []).map((n) => ({ ...n, read: !!n.readFlag, receivedAt: n.createdAt }));
+      setNotifications((s) => {
+        // merge: keep new transient items (without id) at top, then persisted ones
+        const transient = s.filter((x) => !x.id);
+        const persistedIds = new Set(mapped.map((m) => m.id));
+        // keep transient items that aren't duplicates of persisted
+        const filteredTransient = transient.filter((t) => !t.taskId || ![...mapped].some((m) => m.taskId === t.taskId && (!m.type || m.type === t.type)));
+        return [...filteredTransient, ...mapped].slice(0, 100);
+      });
+    } catch (e) {
+      // ignore
+    }
+  };
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -51,6 +69,11 @@ const TaskDashboard: React.FC = () => {
   // connect to websocket for real-time updates
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // load persisted notifications for current user
+    loadNotifications();
+  }, [user]);
 
   useEffect(() => {
     console.log('[ui] wsClient.connect() called');
@@ -81,7 +104,12 @@ const TaskDashboard: React.FC = () => {
         const n = event.payload;
         // if notification has an assigneeId, only show to that user
         if (n.assigneeId && user && Number(n.assigneeId) !== Number(user.id)) return;
-        setNotifications((s) => [n, ...s].slice(0, 20));
+        // prefer reloading persisted notifications so we get DB ids and accurate read flag
+        // schedule a short refresh to allow backend to persist the incoming notification
+        setTimeout(() => loadNotifications(), 300);
+        // still show a transient real-time item so user sees it immediately
+        const withMeta = { ...n, read: false, receivedAt: new Date().toISOString() };
+        setNotifications((s) => [withMeta, ...s].slice(0, 50));
       }
     });
 
@@ -209,7 +237,7 @@ const TaskDashboard: React.FC = () => {
             </Select>
           </FormControl>
           <IconButton aria-label="notifications" color="inherit" onClick={(e) => setNotifAnchor(e.currentTarget)} sx={{ mr: 1 }}>
-            <Badge badgeContent={notifications.length} color="error">
+            <Badge badgeContent={notifications.filter((n) => !n.read).length} color="error">
               <span className="material-icons">notifications</span>
             </Badge>
           </IconButton>
@@ -218,9 +246,14 @@ const TaskDashboard: React.FC = () => {
               <MItem onClick={() => setNotifAnchor(null)}>No notifications</MItem>
             )}
             {notifications.map((n, idx) => (
-              <MItem key={idx} onClick={() => {
+              <MItem key={idx} onClick={async () => {
                 setNotifAnchor(null);
-                setNotifications((s) => s.filter((_, i) => i !== idx));
+                // mark as read but keep in list
+                setNotifications((s) => s.map((item, i) => i === idx ? { ...item, read: true } : item));
+                // if this notification has a persisted id, mark it server-side
+                if (n && n.id) {
+                  try { await apiClient.post(`/api/notifications/${n.id}/read`); } catch (e) {}
+                }
                 // if the notification relates to a task, navigate to its overview page
                 if (n && (n.taskId || n.task?.id)) {
                   const id = n.taskId || (n.task && n.task.id);
@@ -228,9 +261,10 @@ const TaskDashboard: React.FC = () => {
                 }
               }}>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                  <strong>{n.type}</strong>
-                  <span>{n.title}</span>
+                  <strong style={{ fontWeight: n.read ? 400 : 700 }}>{n.type}</strong>
+                  <span style={{ opacity: n.read ? 0.7 : 1 }}>{n.title}</span>
                   {n.dueDate && <small>Due: {new Date(n.dueDate).toLocaleString()}</small>}
+                  <small style={{ alignSelf: 'flex-end', opacity: 0.6 }}>{new Date(n.receivedAt).toLocaleString()}</small>
                 </Box>
               </MItem>
             ))}
