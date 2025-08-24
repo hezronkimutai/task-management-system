@@ -69,18 +69,17 @@ public class TaskService {
         try {
             messagingTemplate.convertAndSend("/topic/tasks", new TaskEvent("CREATED", new TaskResponse(saved)));
         } catch (Exception ignored) {}
-        // also send a notification for interested clients
+        // also send a notification for interested clients: send per-user to everyone except creator
         try {
             NotificationEvent ev = new NotificationEvent("CREATED", saved.getId(), saved.getTitle(), saved.getAssigneeId(), saved.getDueDate());
-            if (saved.getAssigneeId() != null) {
-                messagingTemplate.convertAndSendToUser(String.valueOf(saved.getAssigneeId()), "/queue/notifications", ev);
-                // persist notification for recipient
-                notificationService.save(new com.taskmanagement.entity.Notification(ev.getType(), ev.getTaskId(), ev.getTitle(), ev.getAssigneeId(), ev.getAssigneeId(), ev.getDueDate()));
-            } else {
-                messagingTemplate.convertAndSend("/topic/notifications", ev);
-                // persist broadcast as recipientId null (optional)
-                notificationService.save(new com.taskmanagement.entity.Notification(ev.getType(), ev.getTaskId(), ev.getTitle(), ev.getAssigneeId(), null, ev.getDueDate()));
-            }
+            // send to each user individually so we can exclude the creator from receiving it
+            try {
+                for (com.taskmanagement.entity.User u : userRepository.findAll()) {
+                    if (u.getId().equals(creatorId)) continue; // don't notify the creator
+                    try { messagingTemplate.convertAndSendToUser(String.valueOf(u.getId()), "/queue/notifications", ev); } catch (Exception ignored) {}
+                    try { notificationService.save(new com.taskmanagement.entity.Notification(ev.getType(), ev.getTaskId(), ev.getTitle(), ev.getAssigneeId(), u.getId(), ev.getDueDate())); } catch (Exception ignored) {}
+                }
+            } catch (Exception ignored) {}
         } catch (Exception ignored) {}
         return saved;
     }
@@ -126,17 +125,32 @@ public class TaskService {
         // send notification: differentiate status change vs edit
         try {
             NotificationEvent ev;
-            if (oldStatus != null && updated.getStatus() != null && !oldStatus.equals(updated.getStatus())) {
+            boolean statusChanged = oldStatus != null && updated.getStatus() != null && !oldStatus.equals(updated.getStatus());
+            if (statusChanged) {
                 ev = new NotificationEvent("STATUS_CHANGED", updated.getId(), updated.getTitle(), updated.getAssigneeId(), updated.getDueDate());
             } else {
                 ev = new NotificationEvent("EDITED", updated.getId(), updated.getTitle(), updated.getAssigneeId(), updated.getDueDate());
             }
-            if (updated.getAssigneeId() != null) {
-                messagingTemplate.convertAndSendToUser(String.valueOf(updated.getAssigneeId()), "/queue/notifications", ev);
-                notificationService.save(new com.taskmanagement.entity.Notification(ev.getType(), ev.getTaskId(), ev.getTitle(), ev.getAssigneeId(), ev.getAssigneeId(), ev.getDueDate()));
+
+            // Determine recipients. For status changes notify both assignee and creator (if present).
+            java.util.Set<Long> recipients = new java.util.HashSet<>();
+            if (statusChanged) {
+                if (updated.getAssigneeId() != null) recipients.add(updated.getAssigneeId());
+                if (existingTask.getCreatorId() != null) recipients.add(existingTask.getCreatorId());
             } else {
-                messagingTemplate.convertAndSend("/topic/notifications", ev);
-                notificationService.save(new com.taskmanagement.entity.Notification(ev.getType(), ev.getTaskId(), ev.getTitle(), ev.getAssigneeId(), null, ev.getDueDate()));
+                // for edits, prefer notifying assignee only (or broadcast if unassigned)
+                if (updated.getAssigneeId() != null) recipients.add(updated.getAssigneeId());
+            }
+
+            if (!recipients.isEmpty()) {
+                for (Long rid : recipients) {
+                    try { messagingTemplate.convertAndSendToUser(String.valueOf(rid), "/queue/notifications", ev); } catch (Exception ignored) {}
+                    try { notificationService.save(new com.taskmanagement.entity.Notification(ev.getType(), ev.getTaskId(), ev.getTitle(), ev.getAssigneeId(), rid, ev.getDueDate())); } catch (Exception ignored) {}
+                }
+            } else {
+                // no specific recipient -> broadcast to topic
+                try { messagingTemplate.convertAndSend("/topic/notifications", ev); } catch (Exception ignored) {}
+                try { notificationService.save(new com.taskmanagement.entity.Notification(ev.getType(), ev.getTaskId(), ev.getTitle(), ev.getAssigneeId(), null, ev.getDueDate())); } catch (Exception ignored) {}
             }
         } catch (Exception ignored) {}
         return updated;
