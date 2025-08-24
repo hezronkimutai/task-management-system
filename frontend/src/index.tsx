@@ -23,7 +23,7 @@ root.render(
 function InnerApp() {
   const { theme } = useThemeMode();
   return (
-    <MuiThemeProvider theme={theme}>
+      <MuiThemeProvider theme={theme}>
       <CssBaseline />
       <BrowserRouter>
         <AuthProvider>
@@ -33,6 +33,7 @@ function InnerApp() {
     </MuiThemeProvider>
   );
 }
+
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
