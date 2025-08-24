@@ -154,7 +154,7 @@ public class TaskController {
                     description = "Unauthorized - Authentication required"
             )
     })
-    @GetMapping("/{id}")
+        @GetMapping("/{id:[0-9]+}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
         public ResponseEntity<TaskResponse> getTaskById(@Parameter(description = "Task ID") @PathVariable Long id) {
                 Task task = taskService.findById(id)
@@ -287,7 +287,7 @@ public class TaskController {
                     description = "Unauthorized - Authentication required"
             )
     })
-    @PutMapping("/{id}")
+        @PutMapping("/{id:[0-9]+}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<TaskResponse> updateTask(
             @Parameter(description = "Task ID") @PathVariable Long id,
@@ -355,11 +355,25 @@ public class TaskController {
                     description = "Unauthorized - Authentication required"
             )
     })
-    @DeleteMapping("/{id}")
+        @DeleteMapping("/{id:[0-9]+}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<String> deleteTask(@Parameter(description = "Task ID") @PathVariable Long id) {
         Long currentUserId = getCurrentUserId();
         taskService.deleteTask(id, currentUserId);
         return ResponseEntity.ok("{\"message\": \"Task deleted successfully\"}");
     }
+
+        /**
+         * Get tasks due soon for the current authenticated user.
+         * Returns tasks due within the next 30 minutes by default.
+         */
+        @Operation(summary = "Get tasks due soon", description = "Get tasks due within the next N minutes for the current user")
+        @GetMapping("/due-soon")
+        @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+        public ResponseEntity<java.util.List<TaskResponse>> getDueSoonTasks(@RequestParam(value = "minutes", required = false, defaultValue = "30") int minutes) {
+                Long currentUserId = getCurrentUserId();
+                java.util.List<Task> due = taskService.getTasksDueWithinMinutesForUser(currentUserId, minutes);
+                java.util.List<TaskResponse> resp = due.stream().map(TaskResponse::new).collect(java.util.stream.Collectors.toList());
+                return ResponseEntity.ok(resp);
+        }
 }

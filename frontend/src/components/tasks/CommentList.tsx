@@ -11,14 +11,7 @@ const CommentList: React.FC<Props> = ({ taskId }) => {
   const [comments, setComments] = React.useState<Comment[]>([]);
   const { user } = useAuth();
 
-  const fetch = async () => {
-    try {
-      const data = await commentService.listByTask(taskId);
-      setComments(data);
-    } catch (e) {
-      // ignore for now
-    }
-  };
+  // fetch logic is handled in the effect below (doFetch)
 
   React.useEffect(() => {
     let mounted = true;

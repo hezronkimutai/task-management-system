@@ -5,14 +5,14 @@ import activityService, { Activity } from '../../services/activityService';
 const ActivityList: React.FC<{ taskId: number }> = ({ taskId }) => {
   const [activities, setActivities] = React.useState<Activity[]>([]);
 
-  const load = async () => {
+  const load = React.useCallback(async () => {
     try {
       const data = await activityService.listByTask(taskId);
       setActivities(data);
     } catch (e) {
       setActivities([]);
     }
-  };
+  }, [taskId]);
 
   React.useEffect(() => {
     let mounted = true;
@@ -20,7 +20,7 @@ const ActivityList: React.FC<{ taskId: number }> = ({ taskId }) => {
     const onRefresh = () => { if (mounted) load(); };
     window.addEventListener('activities:refresh', onRefresh);
     return () => { mounted = false; window.removeEventListener('activities:refresh', onRefresh); };
-  }, [taskId]);
+  }, [load]);
 
   if (!activities.length) return (
     <Box mt={2}>

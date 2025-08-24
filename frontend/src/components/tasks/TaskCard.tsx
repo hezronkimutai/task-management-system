@@ -75,6 +75,13 @@ const TaskCard: React.FC<Props> = ({ task, users, onEdit, onDelete, onStatusChan
               <Typography variant="body2" className="task-meta">
                 {task.description}
               </Typography>
+              {/* show due date if provided */}
+              {/** dueDate may be present on task objects from backend */}
+              {(task as any).dueDate && (
+                <Typography variant="caption" className="task-due" sx={{ display: 'block', mt: 0.5 }}>
+                  Due: {new Date((task as any).dueDate).toLocaleString()}
+                </Typography>
+              )}
               <Box mt={1} display="flex" alignItems="center" gap={1}>
                 <Chip label={task.priority} size="small" sx={{ bgcolor: priorityColor[task.priority], color: '#021124', fontWeight: 700 }} />
                 {assignee && (
@@ -142,6 +149,11 @@ const TaskCard: React.FC<Props> = ({ task, users, onEdit, onDelete, onStatusChan
           <Typography variant="body2" className="task-meta">
             {task.description}
           </Typography>
+          {(task as any).dueDate && (
+            <Typography variant="caption" className="task-due" sx={{ display: 'block', mt: 0.5 }}>
+              Due: {new Date((task as any).dueDate).toLocaleString()}
+            </Typography>
+          )}
           <Box mt={1} display="flex" alignItems="center" gap={1}>
             <Chip label={task.priority} size="small" sx={{ bgcolor: priorityColor[task.priority], color: '#021124', fontWeight: 700 }} />
             {assignee && (

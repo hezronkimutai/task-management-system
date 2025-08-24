@@ -89,6 +89,18 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findTasksByUserId(@Param("userId") Long userId);
     
     /**
+     * Find tasks that are due between the provided time window and belong to the given user
+     * (either as creator or assignee).
+     *
+     * @param userId the user id (creator or assignee)
+     * @param from start of the window (inclusive)
+     * @param to end of the window (inclusive)
+     * @return list of tasks due in the window for the user
+     */
+    @Query("SELECT t FROM Task t WHERE (t.creatorId = :userId OR t.assigneeId = :userId) AND t.dueDate IS NOT NULL AND t.dueDate BETWEEN :from AND :to")
+    List<Task> findDueTasksForUserBetween(@Param("userId") Long userId, @Param("from") java.time.LocalDateTime from, @Param("to") java.time.LocalDateTime to);
+    
+    /**
      * Count tasks by status.
      *
      * @param status the status to count

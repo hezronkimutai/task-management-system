@@ -78,4 +78,5 @@ class WSClient {
   }
 }
 
-export default new WSClient();
+const wsClient = new WSClient();
+export default wsClient;

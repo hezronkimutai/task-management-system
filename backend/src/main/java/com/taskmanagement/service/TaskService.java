@@ -262,4 +262,17 @@ public class TaskService {
     public long countByAssigneeId(Long assigneeId) {
         return taskRepository.countByAssigneeId(assigneeId);
     }
+
+    /**
+     * Get tasks that are due within the next `minutes` minutes for a given user (creator or assignee).
+     *
+     * @param userId the user id
+     * @param minutes window in minutes
+     * @return list of tasks due within the window
+     */
+    public List<Task> getTasksDueWithinMinutesForUser(Long userId, long minutes) {
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        java.time.LocalDateTime to = now.plusMinutes(minutes);
+        return taskRepository.findDueTasksForUserBetween(userId, now, to);
+    }
 }
