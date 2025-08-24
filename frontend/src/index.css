@@ -26,6 +26,7 @@ html, body, #root {
   height: 100%;
   background: radial-gradient(1200px 600px at 10% 10%, rgba(123,97,255,0.12), transparent), linear-gradient(180deg, var(--bg-grad-1), var(--bg-grad-2));
   color: var(--muted);
+  overflow: auto;
 }
 
 /* make forms and MUI components slightly translucent */
