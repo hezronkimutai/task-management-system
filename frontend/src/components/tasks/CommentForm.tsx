@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, TextField, Button } from '@mui/material';
 import commentService from '../../services/commentService';
+import activityService from '../../services/activityService';
 
 interface Props {
   taskId: number;
@@ -16,6 +17,7 @@ const CommentForm: React.FC<Props> = ({ taskId, onCreated }) => {
     setLoading(true);
     try {
       await commentService.create({ taskId, content: text.trim() });
+  try { await activityService.create({ taskId, type: 'COMMENT', actorId: undefined, actorName: undefined, detail: text.trim(), createdAt: new Date().toISOString() }); } catch (e) {}
       setText('');
       onCreated && onCreated();
     } catch (e) {
