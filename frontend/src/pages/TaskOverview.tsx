@@ -107,7 +107,7 @@ const TaskOverview: React.FC = () => {
       <Paper className="task-overview-hero" sx={{ p: { xs: 2, md: 3 }, mb: 2 }}>
         <Box sx={{ display: 'flex', flexDirection: isSmall ? 'column' : 'row', alignItems: isSmall ? 'flex-start' : 'center', justifyContent: 'space-between', gap: isSmall ? 1 : 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
-            <IconButton onClick={() => navigate('/tasks')} size="large" sx={{ color: 'white' }}>
+            <IconButton onClick={() => navigate('/tasks')} size="large" sx={{ color: 'var(--muted)' }}>
               <span style={{ fontSize: 20, fontWeight: 700 }}>←</span>
             </IconButton>
             <Box>
@@ -118,7 +118,7 @@ const TaskOverview: React.FC = () => {
 
           <Stack direction={isSmall ? 'column' : 'row'} spacing={1} alignItems={isSmall ? 'flex-start' : 'center'} sx={{ mt: isSmall ? 1 : 0 }}>
             <Chip label={task.priority || 'MEDIUM'} className="overview-meta-chip" sx={{ bgcolor: priorityColor[task.priority] || priorityColor.MEDIUM, color: '#021124', fontWeight: 700 }} />
-            <Chip avatar={<Avatar>{assigneeName.charAt(0).toUpperCase()}</Avatar>} label={assigneeName} variant="outlined" sx={{ color: 'white', borderColor: 'rgba(255,255,255,0.08)' }} />
+            <Chip avatar={<Avatar>{assigneeName.charAt(0).toUpperCase()}</Avatar>} label={assigneeName} variant="outlined" sx={{ color: 'var(--muted)', borderColor: 'rgba(0,0,0,0.06)' }} />
             <Typography variant="caption" className="small-muted">{task.createdAt ? new Date(task.createdAt).toLocaleString() : ''}</Typography>
 
             <FormControl size="small" sx={{ minWidth: 140 }}>
