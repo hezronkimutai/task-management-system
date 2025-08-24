@@ -86,6 +86,10 @@ public class SecurityConfig {
                 auth.requestMatchers("/h2-console/**").permitAll();
                 // Swagger/OpenAPI endpoints
                 auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll();
+                // Allow SockJS endpoints (info and transports) to be publicly reachable so the SockJS client
+                // can perform the initial HTTP handshake (e.g. GET /ws/info). STOMP CONNECT will still be
+                // validated by the channel interceptor which requires a JWT on CONNECT frames.
+                auth.requestMatchers("/ws/**").permitAll();
                 // Admin endpoints
                 auth.requestMatchers("/api/admin/**").hasRole("ADMIN");
                 // User endpoints

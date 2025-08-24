@@ -1,4 +1,4 @@
-import config from '../src/config/config';
+import config from '../../src/config/config';
 
 describe('config', () => {
   it('should have default configuration values', () => {

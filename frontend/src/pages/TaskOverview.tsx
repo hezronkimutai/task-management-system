@@ -129,9 +129,9 @@ const TaskOverview: React.FC = () => {
                 label="Status"
                 onChange={(e) => handleStatusChange(String(e.target.value))}
               >
-                <MenuItem value="TODO">TODO</MenuItem>
-                <MenuItem value="IN_PROGRESS">IN_PROGRESS</MenuItem>
-                <MenuItem value="DONE">DONE</MenuItem>
+                <MenuItem value="TODO">To Do</MenuItem>
+                <MenuItem value="IN_PROGRESS">In Progress</MenuItem>
+                <MenuItem value="DONE">Done</MenuItem>
               </Select>
             </FormControl>
 
