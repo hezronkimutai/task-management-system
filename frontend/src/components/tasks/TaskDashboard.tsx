@@ -5,6 +5,7 @@ import apiClient from '../../services/apiClient';
 import TaskCard, { Task as TaskType } from './TaskCard';
 import TaskForm from './TaskForm';
 import { useAuth } from '../../contexts/AuthContext';
+import activityService from '../../services/activityService';
 
 type User = { id: number; username: string };
 
@@ -61,17 +62,29 @@ const TaskDashboard: React.FC = () => {
   const handleCreateOrUpdate = async (payload: any) => {
     try {
       if (payload.id) {
-        const updated = await apiClient.put<TaskType>(`/api/tasks/${payload.id}`, payload);
-        setTasks((t) => t.map((x) => (x.id === updated.id ? updated : x)));
+        await apiClient.put<TaskType>(`/api/tasks/${payload.id}`, payload);
+        // refresh tasks from server to ensure consistent view
+        await fetchTasks(filterStatus, filterAssignee, filterAssignee === 'UNASSIGNED');
+  // create activity entry for update
+  try { await activityService.create({ taskId: payload.id, type: 'UPDATED', actorId: undefined, actorName: undefined, detail: 'Task updated', createdAt: new Date().toISOString() }); } catch (e) {}
       } else {
         const created = await apiClient.post<TaskType>('/api/tasks', payload);
-        setTasks((t) => [created, ...t]);
+        // fetch latest tasks immediately so UI reflects server state (and respects filters)
+        await fetchTasks(filterStatus, filterAssignee, filterAssignee === 'UNASSIGNED');
+        // create activity entry for creation using server-provided id
+        try { await activityService.create({ taskId: Number(created.id), type: 'CREATED', actorId: undefined, actorName: undefined, detail: 'Task created', createdAt: new Date().toISOString() }); } catch (e) {}
       }
       setOpenForm(false);
     } catch (err: any) {
       setError(err?.response?.data?.message || err?.message || 'Failed to save task');
     }
   };
+
+  React.useEffect(() => {
+    const onTasksRefresh = () => fetchTasks(filterStatus, filterAssignee, filterAssignee === 'UNASSIGNED');
+    window.addEventListener('tasks:refresh', onTasksRefresh);
+    return () => window.removeEventListener('tasks:refresh', onTasksRefresh);
+  }, [filterStatus, filterAssignee]);
 
   const handleDelete = async (taskId: number) => {
     try {
@@ -87,6 +100,8 @@ const TaskDashboard: React.FC = () => {
       const payload = { ...task, status };
       const updated = await apiClient.put<TaskType>(`/api/tasks/${task.id}`, payload);
       setTasks((t) => t.map((x) => (x.id === updated.id ? updated : x)));
+  // record activity for status change
+  try { await activityService.create({ taskId: Number(task.id), type: 'STATUS_CHANGED', actorId: undefined, actorName: undefined, detail: `Status: ${task.status} → ${status}`, createdAt: new Date().toISOString() }); } catch (e) {}
     } catch (err: any) {
       setError(err?.response?.data?.message || err?.message || 'Failed to update status');
     }

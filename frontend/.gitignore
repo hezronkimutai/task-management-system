@@ -21,3 +21,8 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Playwright end-to-end test report
+# Ignore the generated HTML report folder created by Playwright
+/playwright-report
+/playwright-report/*

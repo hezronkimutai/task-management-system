@@ -79,3 +79,49 @@
 .task-card .MuiChip-root {
   transform: translateY(0);
 }
+
+.task-overview-hero {
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(123,97,255,0.16), rgba(11,58,102,0.12));
+  color: white;
+}
+
+.overview-title {
+  color: white;
+  font-weight: 700;
+}
+
+.overview-desc {
+  color: rgba(255,255,255,0.9);
+}
+
+.overview-meta-chip {
+  box-shadow: 0 6px 20px rgba(11,58,102,0.35);
+}
+
+.fancy-section {
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+}
+
+.task-overview-grid {
+  margin-top: 8px;
+}
+
+@media (max-width: 960px) {
+  .task-overview-hero {
+    padding: 16px 12px !important;
+  }
+
+  .overview-title {
+    font-size: 1.25rem;
+  }
+
+  .fancy-section {
+    padding: 12px !important;
+  }
+
+  .task-card, .task-column {
+    padding: 10px !important;
+  }
+}

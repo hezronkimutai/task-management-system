@@ -40,6 +40,12 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
+        @Autowired
+        private com.taskmanagement.service.CommentService commentService;
+
+                @Autowired
+                private com.taskmanagement.repository.UserRepository userRepository;
+
     /**
      * Get current authenticated user ID from security context.
      *
@@ -150,11 +156,22 @@ public class TaskController {
     })
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<TaskResponse> getTaskById(@Parameter(description = "Task ID") @PathVariable Long id) {
-        Task task = taskService.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Task not found with ID: " + id));
-        return ResponseEntity.ok(new TaskResponse(task));
-    }
+        public ResponseEntity<TaskResponse> getTaskById(@Parameter(description = "Task ID") @PathVariable Long id) {
+                Task task = taskService.findById(id)
+                                .orElseThrow(() -> new EntityNotFoundException("Task not found with ID: " + id));
+                // fetch comments for this task
+                java.util.List<com.taskmanagement.entity.Comment> comments = java.util.Collections.emptyList();
+                try {
+                        comments = commentService.getCommentsByTaskId(id);
+                } catch (Exception ignored) {}
+                        java.util.List<com.taskmanagement.dto.CommentResponse> commentResponses = comments.stream().map(c -> {
+                                com.taskmanagement.dto.CommentResponse cr = new com.taskmanagement.dto.CommentResponse(c);
+                                // attach username if available
+                                userRepository.findById(c.getAuthorId()).ifPresent(u -> cr.setAuthorUsername(u.getUsername()));
+                                return cr;
+                        }).collect(java.util.stream.Collectors.toList());
+                return ResponseEntity.ok(new TaskResponse(task, commentResponses));
+        }
 
     /**
      * Create a new task.
