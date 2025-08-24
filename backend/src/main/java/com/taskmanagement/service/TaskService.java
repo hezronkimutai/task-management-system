@@ -11,6 +11,9 @@ import com.taskmanagement.repository.TaskRepository;
 import com.taskmanagement.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import com.taskmanagement.dto.TaskEvent;
+import com.taskmanagement.dto.TaskResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +29,9 @@ public class TaskService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     /**
      * Create a new task.
@@ -54,7 +60,12 @@ public class TaskService {
                 creatorId
         );
 
-        return taskRepository.save(task);
+        Task saved = taskRepository.save(task);
+        // broadcast created event
+        try {
+            messagingTemplate.convertAndSend("/topic/tasks", new TaskEvent("CREATED", new TaskResponse(saved)));
+        } catch (Exception ignored) {}
+        return saved;
     }
 
     /**
@@ -89,7 +100,11 @@ public class TaskService {
         existingTask.setPriority(taskRequest.getPriority());
         existingTask.setAssigneeId(taskRequest.getAssigneeId());
 
-        return taskRepository.save(existingTask);
+        Task updated = taskRepository.save(existingTask);
+        try {
+            messagingTemplate.convertAndSend("/topic/tasks", new TaskEvent("UPDATED", new TaskResponse(updated)));
+        } catch (Exception ignored) {}
+        return updated;
     }
 
     /**
@@ -201,6 +216,9 @@ public class TaskService {
         }
 
         taskRepository.deleteById(taskId);
+        try {
+            messagingTemplate.convertAndSend("/topic/tasks", new TaskEvent("DELETED", taskId));
+        } catch (Exception ignored) {}
     }
 
     /**

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Box, Button, Grid, Paper, Typography, Select, MenuItem, FormControl, InputLabel, Snackbar, Alert, Tabs, Tab, useMediaQuery, useTheme } from '@mui/material';
 import { DragDropContext, Droppable, DropResult } from '@hello-pangea/dnd';
 import apiClient from '../../services/apiClient';
+import wsClient from '../../services/wsClient';
 import TaskCard, { Task as TaskType } from './TaskCard';
 import TaskForm from './TaskForm';
 import { useAuth } from '../../contexts/AuthContext';
@@ -48,6 +49,31 @@ const TaskDashboard: React.FC = () => {
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  // connect to websocket for real-time updates
+  useEffect(() => {
+    console.log('[ui] wsClient.connect() called');
+    wsClient.connect((event: any) => {
+      if (!event || !event.action) return;
+      console.log('[ui] ws event received', event);
+      const act = event.action;
+      if (act === 'CREATED' && event.task) {
+        setTasks((t) => [event.task, ...t]);
+        return;
+      }
+      if (act === 'UPDATED' && event.task) {
+        setTasks((t) => t.map((x) => (x.id === event.task.id ? event.task : x)));
+        return;
+      }
+      if (act === 'DELETED') {
+        const id = event.taskId || (event.task && event.task.id);
+        if (id) setTasks((t) => t.filter((x) => x.id !== id));
+        return;
+      }
+    });
+
+    return () => { wsClient.disconnect(); };
+  }, [/* run once */]);
 
   // Refetch tasks whenever filters change
   useEffect(() => {
@@ -151,16 +177,16 @@ const TaskDashboard: React.FC = () => {
           <FormControl sx={{ mr: 1 }} size="small">
             <InputLabel id="filter-status">Status</InputLabel>
             <Select labelId="filter-status" value={filterStatus} label="Status" onChange={(e) => setFilterStatus(String(e.target.value))}>
-              <MenuItem value="ALL">All</MenuItem>
-              <MenuItem value="TODO">TODO</MenuItem>
-              <MenuItem value="IN_PROGRESS">IN_PROGRESS</MenuItem>
-              <MenuItem value="DONE">DONE</MenuItem>
+              <MenuItem value="ALL">ALL</MenuItem>
+              <MenuItem value="TODO">To Do</MenuItem>
+              <MenuItem value="IN_PROGRESS">In Progress</MenuItem>
+              <MenuItem value="DONE">Done</MenuItem>
             </Select>
           </FormControl>
           <FormControl sx={{ mr: 1 }} size="small">
             <InputLabel id="filter-assignee">Assignee</InputLabel>
             <Select labelId="filter-assignee" value={filterAssignee} label="Assignee" onChange={(e) => setFilterAssignee(String(e.target.value))}>
-              <MenuItem value="ALL">All</MenuItem>
+              <MenuItem value="ALL">ALL</MenuItem>
               <MenuItem value="UNASSIGNED">Unassigned</MenuItem>
               {users.map((u) => (
                 <MenuItem key={u.id} value={String(u.id)}>

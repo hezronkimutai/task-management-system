@@ -65,9 +65,9 @@ const TaskForm: React.FC<Props> = ({ open, onClose, onSubmit, initial = {}, user
         <FormControl fullWidth margin="dense">
           <InputLabel id="status-label">Status</InputLabel>
           <Select labelId="status-label" value={status} label="Status" onChange={(e: SelectChangeEvent) => setStatus(e.target.value as TaskStatus)}>
-            <MenuItem value="TODO">TODO</MenuItem>
-            <MenuItem value="IN_PROGRESS">IN_PROGRESS</MenuItem>
-            <MenuItem value="DONE">DONE</MenuItem>
+            <MenuItem value="TODO">To Do</MenuItem>
+            <MenuItem value="IN_PROGRESS">In Progress</MenuItem>
+            <MenuItem value="DONE">Done</MenuItem>
           </Select>
         </FormControl>
 
