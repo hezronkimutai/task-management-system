@@ -17,6 +17,7 @@ export type Task = {
   creatorId: number;
   createdAt: string;
   updatedAt: string;
+  dueDate?: string | null;
 };
 
 type User = {
@@ -77,6 +78,9 @@ const TaskCard: React.FC<Props> = ({ task, users, onEdit, onDelete, onStatusChan
               </Typography>
               <Box mt={1} display="flex" alignItems="center" gap={1}>
                 <Chip label={task.priority} size="small" sx={{ bgcolor: priorityColor[task.priority], color: '#021124', fontWeight: 700 }} />
+                {task.dueDate && (
+                  <Chip label={`Due: ${new Date(task.dueDate).toLocaleString()}`} size="small" variant="outlined" />
+                )}
                 {assignee && (
                   <Chip
                     size="small"

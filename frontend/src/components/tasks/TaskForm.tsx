@@ -23,6 +23,7 @@ export type Task = {
   status: TaskStatus;
   priority: Priority;
   assigneeId?: number | null;
+  dueDate?: string | null; // ISO string
 };
 
 type User = { id: number; username: string };
@@ -41,6 +42,7 @@ const TaskForm: React.FC<Props> = ({ open, onClose, onSubmit, initial = {}, user
   const [status, setStatus] = React.useState<TaskStatus>((initial.status as TaskStatus) || 'TODO');
   const [priority, setPriority] = React.useState<Priority>((initial.priority as Priority) || 'MEDIUM');
   const [assigneeId, setAssigneeId] = React.useState<number | string>(initial.assigneeId ?? '');
+  const [dueDate, setDueDate] = React.useState<string | null>(initial.dueDate ?? null);
 
   useEffect(() => {
     setTitle(initial.title || '');
@@ -48,11 +50,12 @@ const TaskForm: React.FC<Props> = ({ open, onClose, onSubmit, initial = {}, user
     setStatus((initial.status as TaskStatus) || 'TODO');
     setPriority((initial.priority as Priority) || 'MEDIUM');
     setAssigneeId(initial.assigneeId ?? '');
+  setDueDate(initial.dueDate ?? null);
   }, [initial, open]);
 
   const handleSubmit = () => {
     if (!title.trim()) return;
-    onSubmit({ ...initial, title: title.trim(), description, status, priority, assigneeId: assigneeId === '' ? undefined : (assigneeId as number) });
+  onSubmit({ ...initial, title: title.trim(), description, status, priority, assigneeId: assigneeId === '' ? undefined : (assigneeId as number), dueDate: dueDate || undefined });
   };
 
   return (
@@ -96,6 +99,16 @@ const TaskForm: React.FC<Props> = ({ open, onClose, onSubmit, initial = {}, user
             ))}
           </Select>
         </FormControl>
+
+        <TextField
+          margin="dense"
+          label="Due date"
+          type="datetime-local"
+          fullWidth
+          value={dueDate ?? ''}
+          onChange={(e) => setDueDate(e.target.value === '' ? null : e.target.value)}
+          InputLabelProps={{ shrink: true }}
+        />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>

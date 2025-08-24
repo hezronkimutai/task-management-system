@@ -56,6 +56,9 @@ public class Task {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(name = "due_date")
+    private LocalDateTime dueDate;
+
     // Constructors
     public Task() {}
 
@@ -66,6 +69,11 @@ public class Task {
         this.priority = priority;
         this.assigneeId = assigneeId;
         this.creatorId = creatorId;
+    }
+
+    public Task(String title, String description, TaskStatus status, Priority priority, Long assigneeId, Long creatorId, LocalDateTime dueDate) {
+        this(title, description, status, priority, assigneeId, creatorId);
+        this.dueDate = dueDate;
     }
 
     // Getters and Setters
@@ -141,6 +149,14 @@ public class Task {
         this.updatedAt = updatedAt;
     }
 
+    public LocalDateTime getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(LocalDateTime dueDate) {
+        this.dueDate = dueDate;
+    }
+
     @PrePersist
     protected void onCreate() {
         LocalDateTime now = LocalDateTime.now();
@@ -169,6 +185,7 @@ public class Task {
                 ", creatorId=" + creatorId +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
+                ", dueDate=" + dueDate +
                 '}';
     }
 }

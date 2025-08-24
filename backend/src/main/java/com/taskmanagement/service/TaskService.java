@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import com.taskmanagement.dto.TaskEvent;
 import com.taskmanagement.dto.TaskResponse;
+import com.taskmanagement.dto.NotificationEvent;
 
 import java.util.List;
 import java.util.Optional;
@@ -51,19 +52,29 @@ public class TaskService {
             throw new EntityNotFoundException("Assignee user not found with ID: " + taskRequest.getAssigneeId());
         }
 
-        Task task = new Task(
-                taskRequest.getTitle(),
-                taskRequest.getDescription(),
-                taskRequest.getStatus(),
-                taskRequest.getPriority(),
-                taskRequest.getAssigneeId(),
-                creatorId
-        );
+    Task task = new Task(
+        taskRequest.getTitle(),
+        taskRequest.getDescription(),
+        taskRequest.getStatus(),
+        taskRequest.getPriority(),
+        taskRequest.getAssigneeId(),
+        creatorId,
+        taskRequest.getDueDate()
+    );
 
         Task saved = taskRepository.save(task);
         // broadcast created event
         try {
             messagingTemplate.convertAndSend("/topic/tasks", new TaskEvent("CREATED", new TaskResponse(saved)));
+        } catch (Exception ignored) {}
+        // also send a notification for interested clients
+        try {
+            NotificationEvent ev = new NotificationEvent("CREATED", saved.getId(), saved.getTitle(), saved.getAssigneeId(), saved.getDueDate());
+            if (saved.getAssigneeId() != null) {
+                messagingTemplate.convertAndSendToUser(String.valueOf(saved.getAssigneeId()), "/queue/notifications", ev);
+            } else {
+                messagingTemplate.convertAndSend("/topic/notifications", ev);
+            }
         } catch (Exception ignored) {}
         return saved;
     }
@@ -94,15 +105,31 @@ public class TaskService {
         }
 
         // Update task fields
-        existingTask.setTitle(taskRequest.getTitle());
-        existingTask.setDescription(taskRequest.getDescription());
-        existingTask.setStatus(taskRequest.getStatus());
-        existingTask.setPriority(taskRequest.getPriority());
-        existingTask.setAssigneeId(taskRequest.getAssigneeId());
+    TaskStatus oldStatus = existingTask.getStatus();
+    existingTask.setTitle(taskRequest.getTitle());
+    existingTask.setDescription(taskRequest.getDescription());
+    existingTask.setStatus(taskRequest.getStatus());
+    existingTask.setPriority(taskRequest.getPriority());
+    existingTask.setAssigneeId(taskRequest.getAssigneeId());
+    existingTask.setDueDate(taskRequest.getDueDate());
 
         Task updated = taskRepository.save(existingTask);
         try {
             messagingTemplate.convertAndSend("/topic/tasks", new TaskEvent("UPDATED", new TaskResponse(updated)));
+        } catch (Exception ignored) {}
+        // send notification: differentiate status change vs edit
+        try {
+            NotificationEvent ev;
+            if (oldStatus != null && updated.getStatus() != null && !oldStatus.equals(updated.getStatus())) {
+                ev = new NotificationEvent("STATUS_CHANGED", updated.getId(), updated.getTitle(), updated.getAssigneeId(), updated.getDueDate());
+            } else {
+                ev = new NotificationEvent("EDITED", updated.getId(), updated.getTitle(), updated.getAssigneeId(), updated.getDueDate());
+            }
+            if (updated.getAssigneeId() != null) {
+                messagingTemplate.convertAndSendToUser(String.valueOf(updated.getAssigneeId()), "/queue/notifications", ev);
+            } else {
+                messagingTemplate.convertAndSend("/topic/notifications", ev);
+            }
         } catch (Exception ignored) {}
         return updated;
     }
@@ -215,9 +242,17 @@ public class TaskService {
             throw new UnauthorizedException("Not authorized to delete this task");
         }
 
-        taskRepository.deleteById(taskId);
+        // soft-delete: mark as DELETED so task is not visible but remains in DB
+        existingTask.setStatus(TaskStatus.DELETED);
+        Task softDeleted = taskRepository.save(existingTask);
+        try { messagingTemplate.convertAndSend("/topic/tasks", new TaskEvent("DELETED", softDeleted.getId())); } catch (Exception ignored) {}
         try {
-            messagingTemplate.convertAndSend("/topic/tasks", new TaskEvent("DELETED", taskId));
+            NotificationEvent ev = new NotificationEvent("DELETED", softDeleted.getId(), softDeleted.getTitle(), softDeleted.getAssigneeId(), softDeleted.getDueDate());
+            if (softDeleted.getAssigneeId() != null) {
+                messagingTemplate.convertAndSendToUser(String.valueOf(softDeleted.getAssigneeId()), "/queue/notifications", ev);
+            } else {
+                messagingTemplate.convertAndSend("/topic/notifications", ev);
+            }
         } catch (Exception ignored) {}
     }
 

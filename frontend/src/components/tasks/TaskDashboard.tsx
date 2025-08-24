@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { Box, Button, Grid, Paper, Typography, Select, MenuItem, FormControl, InputLabel, Snackbar, Alert, Tabs, Tab, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Button, Grid, Paper, Typography, Select, MenuItem, FormControl, InputLabel, Snackbar, Alert, Tabs, Tab, useMediaQuery, useTheme, IconButton, Badge, Menu, MenuItem as MItem } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { DragDropContext, Droppable, DropResult } from '@hello-pangea/dnd';
 import apiClient from '../../services/apiClient';
 import wsClient from '../../services/wsClient';
@@ -11,7 +12,6 @@ import activityService from '../../services/activityService';
 type User = { id: number; username: string };
 
 const TaskDashboard: React.FC = () => {
-  useAuth();
   const [tasks, setTasks] = React.useState<TaskType[]>([]);
   const [users, setUsers] = React.useState<User[]>([]);
   const [filterStatus, setFilterStatus] = React.useState<string>('ALL');
@@ -19,19 +19,17 @@ const TaskDashboard: React.FC = () => {
   const [openForm, setOpenForm] = React.useState(false);
   const [editing, setEditing] = React.useState<TaskType | undefined>(undefined);
   const [error, setError] = React.useState<string | null>(null);
+  const [notifications, setNotifications] = React.useState<any[]>([]);
+  const [notifAnchor, setNotifAnchor] = React.useState<null | HTMLElement>(null);
 
   const fetchTasks = async (status?: string, assignee?: string, unassigned?: boolean) => {
     try {
       const params: Record<string, any> = {};
       if (status && status !== 'ALL') params.status = status;
       if (assignee && assignee !== 'ALL' && assignee !== 'UNASSIGNED') params.assigneeId = assignee;
-      if (assignee === 'UNASSIGNED' || unassigned) params.unassigned = true;
-
-      // build query string
-      const query = new URLSearchParams(params).toString();
-      const url = query ? `/api/tasks?${query}` : '/api/tasks';
-      const data = await apiClient.get<TaskType[]>(url);
-      setTasks(data);
+      if (unassigned) params.unassigned = true;
+      const data = await apiClient.get<TaskType[]>('/api/tasks', { params });
+      setTasks(data || []);
     } catch (err: any) {
       setError(err?.message || 'Failed to load tasks');
     }
@@ -51,29 +49,44 @@ const TaskDashboard: React.FC = () => {
   }, []);
 
   // connect to websocket for real-time updates
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
   useEffect(() => {
     console.log('[ui] wsClient.connect() called');
     wsClient.connect((event: any) => {
-      if (!event || !event.action) return;
+      if (!event) return;
       console.log('[ui] ws event received', event);
-      const act = event.action;
-      if (act === 'CREATED' && event.task) {
-        setTasks((t) => [event.task, ...t]);
-        return;
+
+      // task events
+      if (event.action) {
+        const act = event.action;
+        if (act === 'CREATED' && event.task) {
+          setTasks((t) => [event.task, ...t]);
+          return;
+        }
+        if (act === 'UPDATED' && event.task) {
+          setTasks((t) => t.map((x) => (x.id === event.task.id ? event.task : x)));
+          return;
+        }
+        if (act === 'DELETED') {
+          const id = event.taskId || (event.task && event.task.id);
+          if (id) setTasks((t) => t.filter((x) => x.id !== id));
+          return;
+        }
       }
-      if (act === 'UPDATED' && event.task) {
-        setTasks((t) => t.map((x) => (x.id === event.task.id ? event.task : x)));
-        return;
-      }
-      if (act === 'DELETED') {
-        const id = event.taskId || (event.task && event.task.id);
-        if (id) setTasks((t) => t.filter((x) => x.id !== id));
-        return;
+
+      // notification events forwarded by wsClient as { type: 'notification', payload }
+      if (event.type === 'notification' && event.payload) {
+        const n = event.payload;
+        // if notification has an assigneeId, only show to that user
+        if (n.assigneeId && user && Number(n.assigneeId) !== Number(user.id)) return;
+        setNotifications((s) => [n, ...s].slice(0, 20));
       }
     });
 
     return () => { wsClient.disconnect(); };
-  }, [/* run once */]);
+  }, [/* run once */, user]);
 
   // Refetch tasks whenever filters change
   useEffect(() => {
@@ -195,6 +208,33 @@ const TaskDashboard: React.FC = () => {
               ))}
             </Select>
           </FormControl>
+          <IconButton aria-label="notifications" color="inherit" onClick={(e) => setNotifAnchor(e.currentTarget)} sx={{ mr: 1 }}>
+            <Badge badgeContent={notifications.length} color="error">
+              <span className="material-icons">notifications</span>
+            </Badge>
+          </IconButton>
+          <Menu anchorEl={notifAnchor} open={Boolean(notifAnchor)} onClose={() => setNotifAnchor(null)}>
+            {notifications.length === 0 && (
+              <MItem onClick={() => setNotifAnchor(null)}>No notifications</MItem>
+            )}
+            {notifications.map((n, idx) => (
+              <MItem key={idx} onClick={() => {
+                setNotifAnchor(null);
+                setNotifications((s) => s.filter((_, i) => i !== idx));
+                // if the notification relates to a task, navigate to its overview page
+                if (n && (n.taskId || n.task?.id)) {
+                  const id = n.taskId || (n.task && n.task.id);
+                  try { navigate(`/tasks/${id}`); } catch (e) {}
+                }
+              }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                  <strong>{n.type}</strong>
+                  <span>{n.title}</span>
+                  {n.dueDate && <small>Due: {new Date(n.dueDate).toLocaleString()}</small>}
+                </Box>
+              </MItem>
+            ))}
+          </Menu>
           <Button variant="contained" onClick={openCreate} className="btn-accent">
             New Task
           </Button>

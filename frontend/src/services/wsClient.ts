@@ -31,8 +31,8 @@ class WSClient {
     this.client.onConnect = () => {
       this.reconnectAttempts = 0;
   console.log('[ws] stomp: connected');
-      // subscribe
-      this.client?.subscribe('/topic/tasks', (message: Message) => {
+  // subscribe to task events
+  this.client?.subscribe('/topic/tasks', (message: Message) => {
         try {
           const body = JSON.parse(message.body);
           // dedupe events that we've already seen
@@ -41,6 +41,22 @@ class WSClient {
           if (id) this.seenIds.add(Number(id));
           console.log('[ws] stomp: message', body);
           onMessage(body);
+        } catch (e) {}
+      });
+      // subscribe to notifications (global topic)
+      this.client?.subscribe('/topic/notifications', (message: Message) => {
+        try {
+          const body = JSON.parse(message.body);
+          console.log('[ws] notification', body);
+          onMessage({ type: 'notification', payload: body });
+        } catch (e) {}
+      });
+      // subscribe to per-user queue (messages sent via convertAndSendToUser)
+      this.client?.subscribe('/user/queue/notifications', (message: Message) => {
+        try {
+          const body = JSON.parse(message.body);
+          console.log('[ws] user notification', body);
+          onMessage({ type: 'notification', payload: body });
         } catch (e) {}
       });
     };

@@ -119,7 +119,8 @@ const TaskOverview: React.FC = () => {
           <Stack direction={isSmall ? 'column' : 'row'} spacing={1} alignItems={isSmall ? 'flex-start' : 'center'} sx={{ mt: isSmall ? 1 : 0 }}>
             <Chip label={task.priority || 'MEDIUM'} className="overview-meta-chip" sx={{ bgcolor: priorityColor[task.priority] || priorityColor.MEDIUM, color: '#021124', fontWeight: 700 }} />
             <Chip avatar={<Avatar>{assigneeName.charAt(0).toUpperCase()}</Avatar>} label={assigneeName} variant="outlined" sx={{ color: 'var(--muted)', borderColor: 'rgba(0,0,0,0.06)' }} />
-            <Typography variant="caption" className="small-muted">{task.createdAt ? new Date(task.createdAt).toLocaleString() : ''}</Typography>
+                    <Typography variant="caption" className="small-muted">{task.createdAt ? new Date(task.createdAt).toLocaleString() : ''}</Typography>
+                    {task.dueDate && <Typography variant="caption" className="small-muted">Due: {new Date(task.dueDate).toLocaleString()}</Typography>}
 
             <FormControl size="small" sx={{ minWidth: 140 }}>
               <InputLabel id="overview-status-label">Status</InputLabel>
