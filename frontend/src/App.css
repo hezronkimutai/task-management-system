@@ -19,13 +19,13 @@
 
 .hero h1 {
   margin: 0;
-  color: white;
+  color: var(--muted);
   letter-spacing: -0.5px;
 }
 
 .hero p {
   margin: 4px 0 0 0;
-  color: rgba(255,255,255,0.85);
+  color: var(--muted);
 }
 
 .dashboard-grid {
@@ -35,7 +35,7 @@
 .task-column {
   padding: 12px;
   border-radius: 10px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  background: var(--glass);
   min-height: 320px;
 }
 
@@ -43,7 +43,7 @@
   border-radius: 10px;
   padding: 12px;
   margin-bottom: 10px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  background: var(--card-bg);
   transition: transform 160ms ease, box-shadow 160ms ease;
 }
 
@@ -54,21 +54,21 @@
 
 .task-title {
   font-weight: 600;
-  color: white;
+  color: var(--muted);
 }
 
 .task-meta {
-  color: rgba(255,255,255,0.75);
+  color: var(--muted);
   font-size: 0.85rem;
 }
 
 .btn-accent {
   background: linear-gradient(90deg,var(--accent),#4bd3ff);
-  color: white;
+  color: #fff;
 }
 
 .small-muted {
-  color: rgba(255,255,255,0.6);
+  color: rgba(11,58,102,0.6);
   font-size: 0.8rem;
 }
 
@@ -82,17 +82,17 @@
 
 .task-overview-hero {
   border-radius: 12px;
-  background: linear-gradient(135deg, rgba(123,97,255,0.16), rgba(11,58,102,0.12));
-  color: white;
+  background: linear-gradient(135deg, rgba(123,97,255,0.08), rgba(11,58,102,0.04));
+  color: var(--muted);
 }
 
 .overview-title {
-  color: white;
+  color: var(--muted);
   font-weight: 700;
 }
 
 .overview-desc {
-  color: rgba(255,255,255,0.9);
+  color: var(--muted);
 }
 
 .overview-meta-chip {
@@ -101,7 +101,7 @@
 
 .fancy-section {
   border-radius: 10px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  background: var(--glass);
 }
 
 .task-overview-grid {

@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import App from './App';
+import App from '../src/App';
 import { CssBaseline } from '@mui/material';
-import { ThemeProviderCustom } from './contexts/ThemeContext';
-import { AuthProvider } from './contexts/AuthContext';
+import { ThemeProviderCustom } from '../src/contexts/ThemeContext';
+import { AuthProvider } from '../src/contexts/AuthContext';
 
 test('renders task management system heading', () => {
   render(

@@ -83,7 +83,7 @@ const TaskCard: React.FC<Props> = ({ task, users, onEdit, onDelete, onStatusChan
                     avatar={<Avatar sx={{ width: 20, height: 20, fontSize: 12 }}>{assignee.username.charAt(0).toUpperCase()}</Avatar>}
                     label={assignee.username}
                     variant="outlined"
-                    sx={{ color: 'rgba(255,255,255,0.9)', borderColor: 'rgba(255,255,255,0.06)' }}
+                    sx={{ color: 'var(--muted)', borderColor: 'rgba(0,0,0,0.06)' }}
                   />
                 )}
               </Box>
@@ -150,7 +150,7 @@ const TaskCard: React.FC<Props> = ({ task, users, onEdit, onDelete, onStatusChan
                 avatar={<Avatar sx={{ width: 20, height: 20, fontSize: 12 }}>{assignee.username.charAt(0).toUpperCase()}</Avatar>}
                 label={assignee.username}
                 variant="outlined"
-                sx={{ color: 'rgba(255,255,255,0.9)', borderColor: 'rgba(255,255,255,0.06)' }}
+                sx={{ color: 'var(--muted)', borderColor: 'rgba(0,0,0,0.06)' }}
               />
             )}
           </Box>

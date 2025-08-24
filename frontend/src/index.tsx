@@ -3,8 +3,9 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { ThemeProvider, CssBaseline } from '@mui/material';
-import theme from './theme';
+import { ThemeProvider as MuiThemeProvider, CssBaseline } from '@mui/material';
+import { ThemeProviderCustom, useThemeMode } from './contexts/ThemeContext';
+import createAppTheme from './theme';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 
@@ -13,16 +14,26 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <ThemeProvider theme={theme}>
+    <ThemeProviderCustom>
+      <InnerApp />
+    </ThemeProviderCustom>
+  </React.StrictMode>
+);
+
+function InnerApp() {
+  const { theme } = useThemeMode();
+  return (
+      <MuiThemeProvider theme={theme}>
       <CssBaseline />
       <BrowserRouter>
         <AuthProvider>
           <App />
         </AuthProvider>
       </BrowserRouter>
-    </ThemeProvider>
-  </React.StrictMode>
-);
+    </MuiThemeProvider>
+  );
+}
+
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

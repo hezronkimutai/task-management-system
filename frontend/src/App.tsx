@@ -1,7 +1,8 @@
 import React from 'react';
 import './App.css';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, Container, Box, Button } from '@mui/material';
+import { AppBar, Toolbar, Typography, Container, Box, Button, IconButton } from '@mui/material';
+import { useThemeMode } from './contexts/ThemeContext';
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 import LoginForm from './components/auth/LoginForm';
@@ -13,6 +14,7 @@ import { useAuth } from './contexts/AuthContext';
 function App() {
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
+  const { mode, toggleMode } = useThemeMode();
 
   const handleLogout = () => {
     logout();
@@ -28,6 +30,10 @@ function App() {
           </Typography>
           <Button color="inherit" component={Link} to="/">Home</Button>
           <Button color="inherit" component={Link} to="/tasks">Tasks</Button>
+
+          <IconButton color="inherit" onClick={toggleMode} sx={{ ml: 1 }} aria-label="toggle theme">
+            {mode === 'dark' ? '🌞' : '🌙'}
+          </IconButton>
 
           {!isAuthenticated ? (
             <>

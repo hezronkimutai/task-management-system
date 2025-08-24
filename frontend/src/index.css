@@ -22,6 +22,41 @@ code {
   --muted: rgba(255,255,255,0.7);
 }
 
+/* Light-theme overrides when ThemeContext sets data-theme on html */
+html[data-theme='light'] {
+  --bg-grad-1: #f6f7fb;
+  --bg-grad-2: #e9eef8;
+  /* solid, high-contrast card background for light mode */
+  --card-bg: #ffffff;
+  /* subtle glass overlay color (used sparingly) */
+  --glass: rgba(2,17,36,0.04);
+  --accent: #7b61ff;
+  /* readable body text on light backgrounds */
+  --muted: #0b1724; /* dark navy ~ high contrast */
+}
+
+/* Force readable text colors for any components that set light colors inline */
+html[data-theme='light'] body,
+html[data-theme='light'] .MuiTypography-root,
+html[data-theme='light'] .MuiButton-root,
+html[data-theme='light'] .MuiButton-label,
+html[data-theme='light'] .MuiChip-root,
+html[data-theme='light'] .MuiChip-label,
+html[data-theme='light'] .MuiInputBase-root,
+html[data-theme='light'] .task-title,
+html[data-theme='light'] .task-meta,
+html[data-theme='light'] .overview-desc,
+html[data-theme='light'] .overview-title,
+html[data-theme='light'] .small-muted {
+  color: var(--muted) !important;
+}
+
+/* Ensure app header / appbar text is readable in light mode */
+html[data-theme='light'] .MuiAppBar-root,
+html[data-theme='light'] .MuiToolbar-root {
+  color: var(--muted) !important;
+}
+
 html, body, #root {
   height: 100%;
   background: radial-gradient(1200px 600px at 10% 10%, rgba(123,97,255,0.12), transparent), linear-gradient(180deg, var(--bg-grad-1), var(--bg-grad-2));
@@ -31,8 +66,11 @@ html, body, #root {
 
 /* make forms and MUI components slightly translucent */
 .MuiPaper-root, .MuiAppBar-root {
-  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  /* Use the CSS variable for paper/appbar — opaque on light, translucent on dark */
+  background: var(--card-bg);
   backdrop-filter: blur(6px) saturate(120%);
+  /* on light mode, apply a subtle border to separate card from background */
+  border: 1px solid rgba(2,17,36,0.04);
 }
 
 /* subtle glass card shadow */
@@ -47,5 +85,5 @@ html, body, #root {
 }
 
 .muted {
-  color: rgba(255,255,255,0.75);
+  color: var(--muted);
 }

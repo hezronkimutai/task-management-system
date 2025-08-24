@@ -48,6 +48,10 @@
     "moduleNameMapper": {
       "^axios$": "axios/dist/node/axios.cjs"
     },
+    "testMatch": [
+      "**/tests/**/*.(spec|test).{js,jsx,ts,tsx}",
+      "**/?(*.)+(spec|test).{js,jsx,ts,tsx}"
+    ],
     "collectCoverageFrom": [
       "src/**/*.{js,jsx,ts,tsx}",
       "!src/index.tsx",

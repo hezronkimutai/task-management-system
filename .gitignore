@@ -98,3 +98,5 @@ vite.config.ts.timestamp-*
 # Playwright end-to-end test report (frontend)
 frontend/playwright-report
 frontend/playwright-report/*
+frontend/test-results
+frontend/test-results/*
