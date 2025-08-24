@@ -56,6 +56,9 @@ public class Task {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(name = "due_date")
+    private LocalDateTime dueDate;
+
     // Constructors
     public Task() {}
 
@@ -141,6 +144,14 @@ public class Task {
         this.updatedAt = updatedAt;
     }
 
+    public LocalDateTime getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(LocalDateTime dueDate) {
+        this.dueDate = dueDate;
+    }
+
     @PrePersist
     protected void onCreate() {
         LocalDateTime now = LocalDateTime.now();
@@ -169,6 +180,7 @@ public class Task {
                 ", creatorId=" + creatorId +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
+                ", dueDate=" + dueDate +
                 '}';
     }
 }

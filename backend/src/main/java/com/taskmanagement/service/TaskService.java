@@ -59,6 +59,7 @@ public class TaskService {
                 taskRequest.getAssigneeId(),
                 creatorId
         );
+    task.setDueDate(taskRequest.getDueDate());
 
         Task saved = taskRepository.save(task);
         // broadcast created event
@@ -99,6 +100,7 @@ public class TaskService {
         existingTask.setStatus(taskRequest.getStatus());
         existingTask.setPriority(taskRequest.getPriority());
         existingTask.setAssigneeId(taskRequest.getAssigneeId());
+    existingTask.setDueDate(taskRequest.getDueDate());
 
         Task updated = taskRepository.save(existingTask);
         try {

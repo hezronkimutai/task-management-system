@@ -33,6 +33,9 @@ public class TaskUpdateRequest {
     @Schema(description = "ID of the user assigned to this task", example = "2")
     private Long assigneeId;
 
+    @Schema(description = "Task due date/time in ISO format, e.g. 2023-01-02T15:04:05")
+    private java.time.LocalDateTime dueDate;
+
     // Constructors
     public TaskUpdateRequest() {}
 
@@ -42,6 +45,14 @@ public class TaskUpdateRequest {
         this.status = status;
         this.priority = priority;
         this.assigneeId = assigneeId;
+    }
+
+    public java.time.LocalDateTime getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(java.time.LocalDateTime dueDate) {
+        this.dueDate = dueDate;
     }
 
     // Getters and Setters

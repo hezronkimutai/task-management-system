@@ -40,6 +40,8 @@ public class TaskResponse {
 
     @Schema(description = "Task last update timestamp", example = "2023-01-01T10:30:00")
     private LocalDateTime updatedAt;
+    @Schema(description = "Task due date/time", example = "2023-01-02T15:00:00")
+    private LocalDateTime dueDate;
     private java.util.List<CommentResponse> comments;
 
     // Constructors
@@ -55,6 +57,7 @@ public class TaskResponse {
         this.creatorId = task.getCreatorId();
         this.createdAt = task.getCreatedAt();
         this.updatedAt = task.getUpdatedAt();
+    this.dueDate = task.getDueDate();
         this.comments = java.util.Collections.emptyList();
     }
 
@@ -147,5 +150,13 @@ public class TaskResponse {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public LocalDateTime getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(LocalDateTime dueDate) {
+        this.dueDate = dueDate;
     }
 }
